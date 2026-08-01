@@ -45,6 +45,9 @@ coverage/
 # Vercel
 .vercel
 
+# Scratch de ejecución de planes (subagent-driven-development)
+.superpowers/
+
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
