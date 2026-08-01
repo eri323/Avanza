@@ -30,7 +30,7 @@ const color = z.string().regex(HEX_COLOR, 'El color debe ser hexadecimal');
 export const createTaskSchema = z.object({
   title,
   notes: z.string().trim().max(5000).nullable().optional().default(null),
-  dueDate: optionalIsoDate,
+  dueDate: optionalIsoDate.default(null),
   projectId: z.string().uuid().nullable().optional().default(null),
   priority: z.enum(['none', 'low', 'medium', 'high']).default('none'),
 });
