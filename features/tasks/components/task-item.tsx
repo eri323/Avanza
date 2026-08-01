@@ -1,6 +1,6 @@
 'use client';
 
-import { useOptimistic, useTransition } from 'react';
+import { useOptimistic, useState, useTransition } from 'react';
 import { setTaskCompleted } from '../actions';
 import type { Task } from '../types';
 
@@ -14,30 +14,36 @@ export function TaskItem({ task }: { task: Task }) {
   const [optimisticDone, setOptimisticDone] = useOptimistic(
     task.completedAt !== null,
   );
+  const [error, setError] = useState<string | null>(null);
 
   function toggle() {
+    setError(null);
     startTransition(async () => {
       setOptimisticDone(!optimisticDone);
-      await setTaskCompleted(task.id, !optimisticDone);
+      const result = await setTaskCompleted(task.id, !optimisticDone);
+      if (!result.ok) setError(result.error);
     });
   }
 
   return (
-    <li className="flex items-center gap-3 rounded-md px-2 py-1.5 hover:bg-neutral-50">
-      <input
-        type="checkbox"
-        checked={optimisticDone}
-        onChange={toggle}
-        disabled={pending}
-        aria-label={`Completar ${task.title}`}
-        className="size-4"
-      />
-      <span className={optimisticDone ? 'text-neutral-400 line-through' : ''}>
-        {task.title}
-      </span>
-      {task.dueDate && (
-        <span className="ml-auto text-xs text-neutral-500">{task.dueDate}</span>
-      )}
+    <li className="flex flex-col gap-1 rounded-md px-2 py-1.5 hover:bg-neutral-50">
+      <div className="flex items-center gap-3">
+        <input
+          type="checkbox"
+          checked={optimisticDone}
+          onChange={toggle}
+          disabled={pending}
+          aria-label={`Completar ${task.title}`}
+          className="size-4"
+        />
+        <span className={optimisticDone ? 'text-neutral-400 line-through' : ''}>
+          {task.title}
+        </span>
+        {task.dueDate && (
+          <span className="ml-auto text-xs text-neutral-500">{task.dueDate}</span>
+        )}
+      </div>
+      {error && <p className="text-sm text-red-700">{error}</p>}
     </li>
   );
 }
