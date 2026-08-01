@@ -23,17 +23,18 @@ export function HabitHeatmap({
   );
 
   return (
-    <div className="flex gap-1" role="img" aria-label="Últimas 12 semanas">
+    <div className="flex gap-1" role="group" aria-label="Últimas 12 semanas">
       {weeks.map((days, index) => (
         <div key={index} className="flex flex-col gap-1">
           {days.map((date) => {
             const isFuture = date > today;
             const isDone = marked.has(date);
+            const status = isFuture ? 'futuro' : isDone ? 'cumplido' : 'no cumplido';
 
             return (
               <span
                 key={date}
-                title={date}
+                title={`${date}: ${status}`}
                 className="size-2.5 rounded-[2px]"
                 style={{
                   backgroundColor: isDone ? color : '#E5E5E5',
