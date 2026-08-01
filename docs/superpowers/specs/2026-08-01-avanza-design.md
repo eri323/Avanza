@@ -21,7 +21,9 @@ pruebas— importa tanto como las funcionalidades.
 cadencia diaria o semanal, rachas, y una vista Hoy que unifica ambos mundos.
 
 **Fuera de v1, a propósito:** subtareas, etiquetas, recordatorios push,
-adjuntos, drag & drop, colaboración y escritura sin conexión.
+adjuntos, drag & drop, colaboración, escritura sin conexión y OAuth con Google
+—con magic link y contraseña ya hay dos formas de entrar; una tercera sólo
+añade configuración en la consola de Google sin resolver nada nuevo.
 
 **Módulo de finanzas:** aplazado a una fase posterior. El esquema actual lo
 admite como conjunto de tablas paralelo; no obliga a modificar nada de lo ya
@@ -123,7 +125,7 @@ habrá historial de commits que las explique.
 
 | Ruta | Contenido |
 |------|-----------|
-| `/login` | Magic link por email y OAuth con Google |
+| `/login` | Magic link por email y acceso con contraseña |
 | `/hoy` | Hábitos del día y tareas vencidas o de hoy, con captura rápida |
 | `/tareas` | Pendientes agrupadas en Hoy / Próximos / Sin fecha, filtro por proyecto |
 | `/proyectos/[id]` | Tareas del proyecto y su progreso |
@@ -174,9 +176,10 @@ Playwright para tres recorridos completos: registrarse y llegar a Hoy; crear una
 tarea, completarla y verla salir de la lista; marcar un hábito y ver la racha
 subir a uno.
 
-El aislamiento entre usuarios se verifica con un script SQL que confirma que un
-usuario no puede leer ni escribir filas de otro. El esquema ya pasó una batería
-de diez aserciones funcionales tras aplicarse.
+El aislamiento entre usuarios se verifica en producción registrando una segunda
+cuenta en una ventana de incógnito y confirmando que no ve los datos de la
+primera. El esquema ya pasó una batería de diez aserciones funcionales al
+aplicarse, que cubren la integridad entre usuarios a nivel de motor.
 
 ## Criterios de éxito
 
