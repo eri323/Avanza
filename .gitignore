@@ -1,0 +1,50 @@
+# Migraciones SQL — excluidas del repo por decisión explícita.
+# El esquema real vive en el proyecto de Supabase. Ver migrations/README.md.
+migrations/
+
+# Dependencias
+node_modules/
+.pnp
+.pnp.js
+
+# Build
+.next/
+out/
+build/
+dist/
+
+# Entorno — nunca commitear llaves
+.env
+.env*.local
+.env.production
+
+# Supabase local
+.supabase/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editores y SO
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
