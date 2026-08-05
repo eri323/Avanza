@@ -23,9 +23,7 @@ setup('registrar usuario de prueba', async ({ page }) => {
   await page.getByLabel('Contraseña').fill(password);
   await page.getByRole('button', { name: 'Crear cuenta' }).click();
 
-  await expect(page.getByRole('heading', { name: 'Hoy' })).toBeVisible({
-    timeout: 15_000,
-  });
+  await page.waitForURL('**/inicio', { timeout: 15_000 });
 
   await page.context().storageState({ path: AUTH_FILE });
 });

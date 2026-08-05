@@ -1,4 +1,4 @@
-const CACHE = 'avanza-v1';
+const CACHE = 'avanza-v2';
 const SHELL = ['/manifest.webmanifest'];
 
 self.addEventListener('install', (event) => {
@@ -35,6 +35,6 @@ self.addEventListener('fetch', (event) => {
         caches.open(CACHE).then((cache) => cache.put(event.request, copy));
         return response;
       })
-      .catch(() => caches.match(event.request).then((hit) => hit ?? caches.match('/hoy'))),
+      .catch(() => caches.match(event.request).then((hit) => hit ?? caches.match('/inicio'))),
   );
 });

@@ -1,12 +1,12 @@
 import { getProfile } from '@/features/profile';
 import { TimezoneForm } from './timezone-form';
 
-export default async function SettingsPage() {
+export default async function PerfilPage() {
   const profile = await getProfile();
 
   return (
     <main className="mx-auto flex max-w-lg flex-col gap-8 p-6">
-      <h1 className="text-xl font-semibold">Ajustes</h1>
+      <h1 className="text-xl font-semibold">Perfil</h1>
 
       <TimezoneForm current={profile.timezone} />
 

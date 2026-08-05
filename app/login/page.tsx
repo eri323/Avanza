@@ -46,14 +46,14 @@ export default function LoginPage() {
     // middleware las vea y redirija.
     run(signInWithPassword, formData, () => {
       router.refresh();
-      router.push('/hoy');
+      router.push('/inicio');
     });
   }
 
   function handleSignUp(formData: FormData) {
     run(signUpWithPassword, formData, () => {
       router.refresh();
-      router.push('/hoy');
+      router.push('/inicio');
     });
   }
 

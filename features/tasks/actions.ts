@@ -6,8 +6,11 @@ import { createTaskSchema } from '@/lib/validation';
 import { fail, messageForDbError, ok, type ActionResult } from '@/lib/result';
 
 function revalidateTaskViews() {
-  revalidatePath('/hoy');
+  revalidatePath('/inicio');
   revalidatePath('/tareas');
+  // El XP y el nivel se derivan de las tareas completadas: si no se revalida,
+  // /progreso enseñaría el nivel de antes de marcar.
+  revalidatePath('/progreso');
   revalidatePath('/proyectos', 'layout');
 }
 

@@ -2,7 +2,7 @@ import { getTodayData } from '@/features/today';
 import { HabitCard } from '@/features/habits';
 import { QuickAdd, TaskItem } from '@/features/tasks';
 
-export default async function TodayPage() {
+export default async function InicioPage() {
   const { today, overdue, dueToday, habits, projects } = await getTodayData();
 
   const pendingHabits = habits.filter((habit) => !habit.doneToday);
@@ -12,7 +12,7 @@ export default async function TodayPage() {
   return (
     <main className="mx-auto flex max-w-2xl flex-col gap-8 p-6">
       <header>
-        <h1 className="text-xl font-semibold">Hoy</h1>
+        <h1 className="text-xl font-semibold">Inicio</h1>
         <p className="text-sm text-neutral-500">{today}</p>
       </header>
 

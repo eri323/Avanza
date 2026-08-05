@@ -7,8 +7,9 @@ import { fail, messageForDbError, ok, type ActionResult } from '@/lib/result';
 import type { IsoDate } from '@/lib/dates';
 
 function revalidateHabitViews() {
-  revalidatePath('/hoy');
-  revalidatePath('/habitos');
+  revalidatePath('/inicio');
+  revalidatePath('/habitos', 'layout');
+  revalidatePath('/progreso');
 }
 
 export async function createHabit(
