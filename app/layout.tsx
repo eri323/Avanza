@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from 'next';
 import { Bricolage_Grotesque } from 'next/font/google';
-import { Nav } from './nav';
 import { ServiceWorkerRegistration } from './service-worker-registration';
 import { ThemeScript } from './theme-script';
 import './globals.css';
@@ -33,7 +32,6 @@ export default function RootLayout({
         <ThemeScript />
       </head>
       <body className="min-h-dvh bg-surface font-sans text-body text-text antialiased">
-        <Nav />
         <ServiceWorkerRegistration />
         {children}
       </body>
