@@ -1,14 +1,10 @@
 import 'server-only';
 import { createClient } from '@/lib/supabase/server';
 import type { IsoDate } from '@/lib/dates';
+import { UUID_SHAPE } from '@/lib/validation';
 import type { Task } from './types';
 
 const COLUMNS = 'id, title, notes, due_date, project_id, priority, completed_at';
-
-/** Forma de un UUID (8-4-4-4-12 hex, sin distinguir mayúsculas), sin exigir
- *  versión ni variante concretas: Postgres acepta cualquier UUID válido y esta
- *  guarda no debe ser más estricta que la base. */
-const UUID_SHAPE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 type Row = {
   id: string;

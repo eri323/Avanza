@@ -3,6 +3,7 @@ import 'server-only';
 import { createClient } from '@/lib/supabase/server';
 import { addDays, type IsoDate } from '@/lib/dates';
 import { currentStreak, type Cadence } from '@/lib/streaks';
+import { UUID_SHAPE } from '@/lib/validation';
 import type { Habit, HabitWithProgress } from './types';
 
 function toCadence(habit: Habit): Cadence {
@@ -73,7 +74,7 @@ export async function listHabitsWithProgress(
 
 /**
  * Un hábito con su progreso, con la misma ventana de 84 días que la lista: la
- * pantalla de detalle enseña cinco semanas de heatmap y la mejor racha, y las
+ * pantalla de detalle enseña 12 semanas de heatmap y la mejor racha, y las
  * dos deben medirse contra el mismo histórico que la tarjeta.
  */
 export async function getHabitById(
@@ -81,6 +82,13 @@ export async function getHabitById(
   today: IsoDate,
   sinceDays = 84,
 ): Promise<HabitWithProgress | null> {
+  // Un id sin forma de UUID se rechaza antes de tocar la base: Postgres
+  // respondería 22P02 (sintaxis de entrada inválida para uuid), el `throw
+  // error` de abajo lo propagaría, y la pantalla de detalle acabaría en un 500
+  // en vez de un 404. Un id malformado no puede existir, así que `null` es
+  // semánticamente idéntico a "no existe".
+  if (!UUID_SHAPE.test(id)) return null;
+
   const supabase = await createClient();
 
   const { data: row, error } = await supabase

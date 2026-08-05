@@ -65,9 +65,11 @@ export async function getLevel(): Promise<LevelInfo & { totalXp: number }> {
  * XP de los últimos siete días.
  *
  * `completed_at` es un instante con zona; el día al que pertenece depende de la
- * zona del perfil, así que se convierte aquí y no en SQL. La ventana pedida a
- * la base lleva un día de margen por cada lado para que ninguna zona horaria
- * deje fuera un completado del borde.
+ * zona del perfil, así que se convierte aquí y no en SQL. El margen inferior de
+ * 24 h en la consulta cubre de sobra el offset máximo (+14 h), así que ningún
+ * completado del borde alto queda fuera por la conversión de zona. A propósito
+ * no hay cota superior: `weeklyXp` ya recorta lo que sobra al armar los siete
+ * cubos, así que filtrar de más aquí sólo arriesgaría perder un borde.
  */
 export async function getWeeklyXp(
   today: IsoDate,

@@ -3,6 +3,12 @@ import { z } from 'zod';
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 const HEX_COLOR = /^#[0-9A-Fa-f]{6}$/;
 
+/** Forma de un UUID (8-4-4-4-12 hex, sin distinguir mayúsculas), sin exigir
+ *  versión ni variante concretas: Postgres acepta cualquier UUID válido y esta
+ *  guarda no debe ser más estricta que la base. */
+export const UUID_SHAPE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 /** Un input de tipo date vacío llega como '', no como undefined. */
 const optionalIsoDate = z
   .string()
