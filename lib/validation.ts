@@ -35,11 +35,18 @@ const color = z.string().regex(HEX_COLOR, 'El color debe ser hexadecimal');
 
 /** Un emoji compuesto (bandera, familia, tono de piel) puede ocupar varios
  *  puntos de código; 8 caracteres cubren los que existen sin dejar meter una
- *  frase en el hueco del icono. */
+ *  frase en el hueco del icono.
+ *
+ *  El conteo va por puntos de código y no por `.max()`, que cuenta unidades
+ *  UTF-16: la familia 👨‍👩‍👧‍👦 son 11 unidades (4 emojis de 2 más 3 ZWJ) y se
+ *  rechazaba justo el caso que este límite dice cubrir. */
 const icon = z
   .string()
   .trim()
-  .max(8, 'El emoji no puede pasar de 8 caracteres')
+  .refine(
+    (value) => [...value].length <= 8,
+    'El emoji no puede pasar de 8 caracteres',
+  )
   .nullable()
   .optional()
   .transform((value) => (value ? value : null));

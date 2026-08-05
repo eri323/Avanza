@@ -39,6 +39,21 @@ describe('dayXp', () => {
     expect(result.percent).toBe(100);
   });
 
+  it('no pinta la barra llena mientras quede algo sin marcar', () => {
+    // 199 de 200 tareas es 99,5 %: `Math.round` a secas lo subiría a 100 y el
+    // día se vería cerrado con una tarea todavía pendiente.
+    const tasks = Array.from({ length: 200 }, (_, index) => ({
+      priority: 'none' as const,
+      done: index > 0,
+    }));
+
+    const result = dayXp(tasks, []);
+
+    expect(result.earned).toBe(3980);
+    expect(result.goal).toBe(4000);
+    expect(result.percent).toBe(99);
+  });
+
   it('un día sin nada pendiente no divide por cero', () => {
     expect(dayXp([], [])).toEqual({ earned: 0, goal: 0, percent: 0 });
   });
@@ -95,6 +110,17 @@ describe('levelFromXp', () => {
       xpIntoLevel: 750,
       xpForNextLevel: 1500,
       percent: 50,
+    });
+  });
+
+  it('no anuncia el 100 % antes de subir de nivel', () => {
+    // 4.480 sobre 4.500 es 99,56 %: `Math.round` pintaría la barra llena junto
+    // al texto "4.480 / 4.500 XP para el nivel 6" sin haber subido.
+    expect(levelFromXp(12480)).toEqual({
+      level: 5,
+      xpIntoLevel: 4480,
+      xpForNextLevel: 4500,
+      percent: 99,
     });
   });
 

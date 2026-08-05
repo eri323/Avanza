@@ -124,6 +124,11 @@ export function bestStreak(
  * empieza una semana nueva, el día 8 del mes (un solo día de la segunda
  * semana) ya exigiría el doble de marcas y el porcentaje caería en vez de
  * mantenerse al día.
+ *
+ * Ese prorrateo **no** usa semanas ISO, a diferencia de `currentStreak` y
+ * `bestStreak`, que en cadencia semanal cuentan semanas ISO completas. Las dos
+ * cifras acaban juntas en la pantalla de detalle del hábito y no tienen por qué
+ * cuadrar entre sí: miden cosas distintas sobre calendarios distintos.
  */
 export function monthlyCompletion(
   entryDates: IsoDate[],

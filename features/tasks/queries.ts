@@ -57,11 +57,26 @@ export async function listTasksForProject(projectId: string): Promise<Task[]> {
 }
 
 /**
- * El "pozo del día": todo lo que vencía hoy o antes, completado o no.
+ * El "pozo del día": las tareas pendientes que vencían hoy o antes, más
+ * **todas** las de hoy, estén marcadas o no.
  *
- * Incluye las completadas a propósito: la meta del día es todo el XP disponible
- * hoy, y una tarea que ya se marcó sigue formando parte de esa meta. Si sólo se
- * trajeran las pendientes, la barra se vaciaría al completar en vez de llenarse.
+ * Las completadas **de hoy** entran a propósito: la meta del día es todo el XP
+ * disponible hoy, y una tarea que ya se marcó sigue formando parte de esa meta.
+ * Si sólo se trajeran las pendientes, la barra se vaciaría al completar en vez
+ * de llenarse.
+ *
+ * Las completadas con fecha vieja se excluyen a propósito: ya se contaron el
+ * día que les tocaba, y volver a meterlas llenaría la barra de hoy con trabajo
+ * de marzo. Sin ese filtro el pozo crecería sin cota con cada mes de uso.
+ *
+ * Fuga residual conocida y aceptada: una tarea vencida hace días que se
+ * completa hoy entra por los dos lados —el render de hoy ya la había traído
+ * como pendiente, así que al marcarla suma en `goal` y en `earned`— pero el
+ * siguiente render del servidor ya no la trae, porque su `due_date` no es hoy
+ * y su `completed_at` dejó de ser null. La barra del día la pierde; su XP sí
+ * queda en el gráfico semanal, que usa la fecha real de completado. Cerrar esa
+ * grieta exigiría aritmética de zonas horarias sobre `completed_at` en cada
+ * consulta; el desajuste es de una tarea y de un render, y se acepta.
  */
 export async function listDueUpToToday(today: IsoDate): Promise<Task[]> {
   const supabase = await createClient();
@@ -70,6 +85,7 @@ export async function listDueUpToToday(today: IsoDate): Promise<Task[]> {
     .from('tasks')
     .select(COLUMNS)
     .lte('due_date', today)
+    .or(`completed_at.is.null,due_date.eq.${today}`)
     .order('due_date', { ascending: true })
     .order('position', { ascending: true });
 

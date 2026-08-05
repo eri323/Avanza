@@ -111,6 +111,47 @@ describe('createHabitSchema', () => {
   });
 });
 
+describe('icon', () => {
+  // El emoji de familia: cuatro emojis de dos unidades UTF-16 más tres ZWJ =
+  // 11 unidades, pero sólo 7 puntos de código. Se arma con escapes porque el
+  // ZWJ es invisible y no debe depender de cómo guarde el editor este archivo.
+  const ZWJ = String.fromCodePoint(0x200d);
+  const FAMILIA = `\u{1F468}${ZWJ}\u{1F469}${ZWJ}\u{1F467}${ZWJ}\u{1F466}`;
+
+  const parseIcon = (icon: string) =>
+    createHabitSchema.safeParse({ name: 'Leer', cadence: 'daily', icon });
+
+  it('acepta un emoji simple', () => {
+    const result = parseIcon('\u{1F4DA}');
+    expect(result.success).toBe(true);
+  });
+
+  it('acepta un emoji compuesto de varios puntos de código', () => {
+    // El límite se mide en puntos de código: contarlo en unidades UTF-16
+    // rechazaría la familia, que es justo el caso que el límite dice cubrir.
+    expect(FAMILIA.length).toBe(11);
+    expect([...FAMILIA].length).toBe(7);
+
+    const result = parseIcon(FAMILIA);
+    expect(result.success).toBe(true);
+    expect(result.success && result.data.icon).toBe(FAMILIA);
+  });
+
+  it('normaliza cadena vacía a null', () => {
+    const result = createHabitSchema.parse({
+      name: 'Leer',
+      cadence: 'daily',
+      icon: '',
+    });
+    expect(result.icon).toBeNull();
+  });
+
+  it('rechaza más de 8 puntos de código', () => {
+    const result = parseIcon('\u{1F642}'.repeat(9));
+    expect(result.success).toBe(false);
+  });
+});
+
 describe('messageForDbError', () => {
   it('traduce el día duplicado', () => {
     expect(messageForDbError('23505')).toBe('Ese día ya estaba marcado.');

@@ -809,7 +809,10 @@ export function HabitDetail({
 import { notFound } from 'next/navigation';
 import { bestStreak, monthlyCompletion, type Cadence } from '@/lib/streaks';
 import { getTodayForUser } from '@/features/profile';
-import { getHabitById, HabitDetail, heatColumns } from '@/features/habits';
+import { getHabitById, HabitDetail } from '@/features/habits';
+// `heatColumns` es pura y se importa del módulo, no del barril: el barril
+// arrastra `./queries`, que es `server-only`.
+import { heatColumns } from '@/features/habits/heatmap';
 
 const HEATMAP_WEEKS = 5;
 
@@ -851,11 +854,14 @@ export default async function HabitoDetallePage({
 export type { Habit, HabitWithProgress } from './types';
 export { listHabitsWithProgress, getHabitById } from './queries';
 export { createHabit, updateHabit, toggleHabitEntry } from './actions';
-export { heatColumns, weekDots, type WeekDot } from './heatmap';
 export { HabitCard } from './components/habit-card';
 export { HabitEditor } from './components/habit-editor';
 export { HabitDetail } from './components/habit-detail';
 ```
+
+`heatColumns`, `weekDots` y `WeekDot` **no** salen de aquí: son puras y la UI
+las necesita en el cliente, mientras que este barril arrastra `./queries`, que
+es `server-only`. Se importan de `@/features/habits/heatmap`.
 
 - [ ] **Paso 4: Verificar a mano**
 

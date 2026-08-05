@@ -1128,13 +1128,13 @@ npx vitest run features/habits/__tests__/heatmap.test.ts
 
 Esperado: PASS, 6 tests.
 
-- [ ] **Paso 9: Exportarlo desde el barril de hábitos**
+- [ ] **Paso 9: No reexportarlo desde el barril de hábitos**
 
-Añade a `features/habits/index.ts`:
-
-```ts
-export { heatColumns, weekDots, type WeekDot } from './heatmap';
-```
+`features/habits/index.ts` **no se toca**. `heatColumns`, `weekDots` y `WeekDot`
+son funciones puras que la UI necesita en el cliente, y el barril reexporta
+`./queries`, que abre con `import 'server-only'`: cualquier componente
+`'use client'` que las tomara del barril rompería el build. Los consumidores
+importan de `@/features/habits/heatmap`.
 
 - [ ] **Paso 10: Batería completa**
 
@@ -1289,20 +1289,32 @@ Mensaje sugerido: `feat(pulso): saludo según la hora local del usuario`
 **Interfaces:**
 - Consumes: `Task`, `IsoDate`.
 - Produce:
-  - `listDueUpToToday(today: IsoDate): Promise<Task[]>` — tareas con fecha de
-    hoy o anterior, **completadas incluidas**. Es el conjunto del que salen el
-    XP ganado y la meta del día.
+  - `listDueUpToToday(today: IsoDate): Promise<Task[]>` — las pendientes con
+    fecha de hoy o anterior, más **todas** las de hoy (completadas incluidas).
+    Es el conjunto del que salen el XP ganado y la meta del día.
   - `getTaskById(id: string): Promise<Task | null>`
   - `type ProjectWithCount = Project & { pendingCount: number }`
   - `listProjectsWithCounts(): Promise<ProjectWithCount[]>`
 
 **Decisión documentada.** El "pozo del día" son las tareas con `due_date <=
-hoy`, sin mirar *cuándo* se completaron. Una tarea con fecha de hoy que se
-completó ayer cuenta como XP de hoy. La alternativa —filtrar por `completed_at`
-convertido a la zona del usuario— obligaría a hacer aritmética de zonas horarias
-en cada consulta para corregir un caso que casi no ocurre. Se acepta la
-simplificación; `weeklyXp` sí usa la fecha real de completado, que es donde la
-diferencia se vería.
+hoy` **que sigan pendientes**, más todas las de hoy estén marcadas o no:
+`due_date <= hoy AND (completed_at IS NULL OR due_date = hoy)`.
+
+Las completadas de hoy entran a propósito: si sólo se trajeran las pendientes,
+la barra se vaciaría al completar en vez de llenarse. Las completadas con fecha
+vieja se excluyen a propósito: ya se contaron el día que les tocaba, y volver a
+meterlas llenaría la barra de hoy con trabajo de marzo. Sin ese filtro el pozo
+crece sin cota — a los tres meses de uso la barra del día nacería casi llena sin
+haber hecho nada.
+
+Sobrevive una fuga pequeña y acotada: una tarea vencida hace días que se
+completa hoy entra por los dos lados en el render en curso (ya venía en la lista
+como pendiente, así que al marcarla suma en `goal` y en `earned`) y desaparece
+del pozo en el siguiente render del servidor. Su XP sí queda en el gráfico
+semanal, que usa la fecha real de completado. Cerrarla exigiría filtrar por
+`completed_at` convertido a la zona del usuario, es decir, aritmética de zonas
+horarias en cada consulta; se acepta la simplificación y se documenta en el
+docblock de la función.
 
 - [ ] **Paso 1: Ampliar `features/tasks/queries.ts`**
 
@@ -1310,11 +1322,26 @@ Añade al final del archivo:
 
 ```ts
 /**
- * El "pozo del día": todo lo que vencía hoy o antes, completado o no.
+ * El "pozo del día": las tareas pendientes que vencían hoy o antes, más
+ * **todas** las de hoy, estén marcadas o no.
  *
- * Incluye las completadas a propósito: la meta del día es todo el XP disponible
- * hoy, y una tarea que ya se marcó sigue formando parte de esa meta. Si sólo se
- * trajeran las pendientes, la barra se vaciaría al completar en vez de llenarse.
+ * Las completadas **de hoy** entran a propósito: la meta del día es todo el XP
+ * disponible hoy, y una tarea que ya se marcó sigue formando parte de esa meta.
+ * Si sólo se trajeran las pendientes, la barra se vaciaría al completar en vez
+ * de llenarse.
+ *
+ * Las completadas con fecha vieja se excluyen a propósito: ya se contaron el
+ * día que les tocaba, y volver a meterlas llenaría la barra de hoy con trabajo
+ * de marzo. Sin ese filtro el pozo crecería sin cota con cada mes de uso.
+ *
+ * Fuga residual conocida y aceptada: una tarea vencida hace días que se
+ * completa hoy entra por los dos lados —el render de hoy ya la había traído
+ * como pendiente, así que al marcarla suma en `goal` y en `earned`— pero el
+ * siguiente render del servidor ya no la trae, porque su `due_date` no es hoy
+ * y su `completed_at` dejó de ser null. La barra del día la pierde; su XP sí
+ * queda en el gráfico semanal, que usa la fecha real de completado. Cerrar esa
+ * grieta exigiría aritmética de zonas horarias sobre `completed_at` en cada
+ * consulta; el desajuste es de una tarea y de un render, y se acepta.
  */
 export async function listDueUpToToday(today: IsoDate): Promise<Task[]> {
   const supabase = await createClient();
@@ -1323,6 +1350,7 @@ export async function listDueUpToToday(today: IsoDate): Promise<Task[]> {
     .from('tasks')
     .select(COLUMNS)
     .lte('due_date', today)
+    .or(`completed_at.is.null,due_date.eq.${today}`)
     .order('due_date', { ascending: true })
     .order('position', { ascending: true });
 

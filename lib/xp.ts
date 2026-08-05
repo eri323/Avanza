@@ -58,7 +58,14 @@ export function dayXp(tasks: DayTask[], habits: DayHabit[]): DayXp {
 
   // Un día sin nada pendiente da meta cero: sin esto la barra dividiría por
   // cero y mostraría NaN justo el día que no había nada que reprochar.
-  const percent = goal === 0 ? 0 : Math.round((earned / goal) * 100);
+  //
+  // El tope de 99 evita que `Math.round` pinte la barra llena sin haberlo
+  // completado todo: 99,6 % redondearía a 100 y el día se vería cerrado con
+  // trabajo pendiente. El 100 se reserva para haber llegado de verdad.
+  const percent =
+    goal === 0 ? 0
+    : earned >= goal ? 100
+    : Math.min(99, Math.round((earned / goal) * 100));
 
   return { earned, goal, percent };
 }
@@ -97,11 +104,20 @@ export function levelFromXp(totalXp: number): LevelInfo {
   const xpForNextLevel = LEVEL_STEP * (2 * level - 1);
   const xpIntoLevel = total - floorXp;
 
+  // Mismo tope que en `dayXp`: con 12.480 XP el usuario está en el nivel 5 con
+  // 4.480 de 4.500 (99,56 %), y `Math.round` a secas pintaría la barra llena
+  // junto al texto "4.480 / 4.500 XP para el nivel 6". El 100 % sólo aparece
+  // cuando de verdad se alcanzó el umbral, es decir, al cambiar de nivel.
+  const percent =
+    xpForNextLevel === 0 ? 0
+    : xpIntoLevel >= xpForNextLevel ? 100
+    : Math.min(99, Math.round((xpIntoLevel / xpForNextLevel) * 100));
+
   return {
     level,
     xpIntoLevel,
     xpForNextLevel,
-    percent: Math.round((xpIntoLevel / xpForNextLevel) * 100),
+    percent,
   };
 }
 

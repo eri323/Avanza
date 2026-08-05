@@ -29,7 +29,7 @@ Lee las **Restricciones globales** del [README](README.md#restricciones-globales
       today: IsoDate;
       greeting: string;
       displayName: string | null;
-      dayTasks: Task[];              // due_date <= hoy, completadas incluidas
+      dayTasks: Task[];              // pendientes vencidas + todas las de hoy
       habits: HabitWithProgress[];
       level: LevelInfo & { totalXp: number };
     };
@@ -135,10 +135,14 @@ export type HomeData = {
   greeting: string;
   displayName: string | null;
   /**
-   * Todo lo que vencía hoy o antes, completado o no: es a la vez la lista que
-   * se pinta y el pozo del que salen el XP ganado y la meta del día. Separarlo
-   * en dos consultas sería la forma de que la barra y la lista se
-   * contradijeran.
+   * Las pendientes que vencían hoy o antes más todas las de hoy, marcadas o
+   * no: es a la vez la lista que se pinta y el pozo del que salen el XP ganado
+   * y la meta del día. Separarlo en dos consultas sería la forma de que la
+   * barra y la lista se contradijeran.
+   *
+   * Las completadas con fecha vieja quedan fuera a propósito: ya se contaron el
+   * día que les tocaba, y arrastrarlas haría crecer el pozo sin cota. La regla
+   * exacta vive en el docblock de `listDueUpToToday`.
    */
   dayTasks: Task[];
   habits: HabitWithProgress[];

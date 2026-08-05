@@ -73,9 +73,12 @@ export async function listHabitsWithProgress(
 }
 
 /**
- * Un hábito con su progreso, con la misma ventana de 84 días que la lista: la
- * pantalla de detalle enseña 12 semanas de heatmap y la mejor racha, y las
- * dos deben medirse contra el mismo histórico que la tarjeta.
+ * Un hábito con su progreso, con la misma ventana de 84 días que la lista.
+ *
+ * Los 84 días alimentan la mejor racha y el porcentaje del mes; el heatmap de
+ * la pantalla de detalle pinta sólo las últimas 5 semanas. La ventana es la
+ * misma que la de la tarjeta a propósito: las cifras de las dos pantallas se
+ * miden contra el mismo histórico.
  */
 export async function getHabitById(
   id: string,
