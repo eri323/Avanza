@@ -27,6 +27,17 @@ const name = z
 
 const color = z.string().regex(HEX_COLOR, 'El color debe ser hexadecimal');
 
+/** Un emoji compuesto (bandera, familia, tono de piel) puede ocupar varios
+ *  puntos de código; 8 caracteres cubren los que existen sin dejar meter una
+ *  frase en el hueco del icono. */
+const icon = z
+  .string()
+  .trim()
+  .max(8, 'El emoji no puede pasar de 8 caracteres')
+  .nullable()
+  .optional()
+  .transform((value) => (value ? value : null));
+
 export const createTaskSchema = z.object({
   title,
   notes: z.string().trim().max(5000).nullable().optional().default(null),
@@ -53,6 +64,7 @@ export const createHabitSchema = z
   .object({
     name,
     color: color.default('#22C55E'),
+    icon,
     cadence: z.enum(['daily', 'weekly']),
     targetPerWeek: z.coerce.number().int().min(1).max(7).nullable().optional(),
   })

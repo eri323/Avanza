@@ -20,6 +20,7 @@ export async function createHabit(
   const parsed = createHabitSchema.safeParse({
     name: formData.get('name'),
     color: formData.get('color') ?? undefined,
+    icon: formData.get('icon') ?? undefined,
     cadence,
     // Un hábito diario no lleva meta; mandarla en cero rompería el CHECK.
     targetPerWeek: cadence === 'weekly' && rawTarget ? rawTarget : null,
@@ -36,6 +37,7 @@ export async function createHabit(
     user_id: user.id,
     name: parsed.data.name,
     color: parsed.data.color,
+    icon: parsed.data.icon,
     cadence: parsed.data.cadence,
     target_per_week: parsed.data.targetPerWeek ?? null,
   });

@@ -4,6 +4,8 @@ export type Habit = {
   id: string;
   name: string;
   color: string;
+  /** Emoji. Anulable: los hábitos anteriores al rediseño no lo tienen. */
+  icon: string | null;
   cadence: 'daily' | 'weekly';
   targetPerWeek: number | null;
 };

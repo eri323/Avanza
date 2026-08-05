@@ -52,6 +52,7 @@ export type Database = {
           cadence: Database["public"]["Enums"]["habit_cadence"]
           color: string
           created_at: string
+          icon: string | null
           id: string
           name: string
           position: number
@@ -64,6 +65,7 @@ export type Database = {
           cadence?: Database["public"]["Enums"]["habit_cadence"]
           color?: string
           created_at?: string
+          icon?: string | null
           id?: string
           name: string
           position?: number
@@ -76,6 +78,7 @@ export type Database = {
           cadence?: Database["public"]["Enums"]["habit_cadence"]
           color?: string
           created_at?: string
+          icon?: string | null
           id?: string
           name?: string
           position?: number

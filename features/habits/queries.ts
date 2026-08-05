@@ -26,7 +26,7 @@ export async function listHabitsWithProgress(
 
   const { data: habitRows, error: habitsError } = await supabase
     .from('habits')
-    .select('id, name, color, cadence, target_per_week')
+    .select('id, name, color, icon, cadence, target_per_week')
     .is('archived_at', null)
     .order('position', { ascending: true })
     .order('created_at', { ascending: true });
@@ -56,6 +56,7 @@ export async function listHabitsWithProgress(
       id: row.id,
       name: row.name,
       color: row.color,
+      icon: row.icon,
       cadence: row.cadence,
       targetPerWeek: row.target_per_week,
     };

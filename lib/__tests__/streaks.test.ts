@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { currentStreak, type Cadence } from '../streaks';
+import {
+  bestStreak,
+  currentStreak,
+  globalStreak,
+  monthlyCompletion,
+  type Cadence,
+} from '../streaks';
 
 const daily: Cadence = { type: 'daily' };
 const weekly3: Cadence = { type: 'weekly', targetPerWeek: 3 };
@@ -89,5 +95,92 @@ describe('currentStreak — cadencia semanal', () => {
       '2026-08-03', '2026-08-04', '2026-08-05', '2026-08-06', '2026-08-07',
     ];
     expect(currentStreak(entries, weekly3, '2026-08-07')).toBe(1);
+  });
+});
+
+describe('bestStreak', () => {
+  it('encuentra la racha más larga aunque no sea la actual', () => {
+    const dates = [
+      '2026-07-01', '2026-07-02', '2026-07-03', '2026-07-04',
+      '2026-07-20',
+    ];
+
+    expect(bestStreak(dates, { type: 'daily' }, '2026-07-20')).toBe(4);
+  });
+
+  it('sin marcas devuelve cero', () => {
+    expect(bestStreak([], { type: 'daily' }, '2026-08-04')).toBe(0);
+  });
+
+  it('ignora las marcas posteriores a hoy', () => {
+    expect(
+      bestStreak(['2026-08-04', '2026-08-05', '2026-08-06'], { type: 'daily' }, '2026-08-04'),
+    ).toBe(1);
+  });
+
+  it('en semanal cuenta semanas que cumplieron la meta', () => {
+    const dates = [
+      // Semana del 2026-07-13: 2 marcas, cumple.
+      '2026-07-13', '2026-07-15',
+      // Semana del 2026-07-20: 2 marcas, cumple.
+      '2026-07-20', '2026-07-22',
+      // Semana del 2026-07-27: 1 marca, no cumple.
+      '2026-07-27',
+    ];
+
+    expect(
+      bestStreak(dates, { type: 'weekly', targetPerWeek: 2 }, '2026-07-31'),
+    ).toBe(2);
+  });
+});
+
+describe('monthlyCompletion', () => {
+  it('en diario es marcas del mes sobre días transcurridos', () => {
+    const dates = ['2026-08-01', '2026-08-02', '2026-08-04'];
+
+    expect(monthlyCompletion(dates, { type: 'daily' }, '2026-08-04')).toBe(75);
+  });
+
+  it('no cuenta las marcas de otro mes', () => {
+    const dates = ['2026-07-31', '2026-08-01'];
+
+    expect(monthlyCompletion(dates, { type: 'daily' }, '2026-08-02')).toBe(50);
+  });
+
+  it('en semanal se mide contra la meta por semanas transcurridas', () => {
+    // 8 días transcurridos → 2 semanas empezadas → meta 3 × 2 = 6.
+    const dates = ['2026-08-01', '2026-08-02', '2026-08-08'];
+
+    expect(
+      monthlyCompletion(dates, { type: 'weekly', targetPerWeek: 3 }, '2026-08-08'),
+    ).toBe(50);
+  });
+
+  it('nunca pasa del 100', () => {
+    const dates = ['2026-08-01', '2026-08-01', '2026-08-02', '2026-08-03'];
+
+    expect(monthlyCompletion(dates, { type: 'daily' }, '2026-08-02')).toBe(100);
+  });
+
+  it('sin marcas es cero', () => {
+    expect(monthlyCompletion([], { type: 'daily' }, '2026-08-04')).toBe(0);
+  });
+});
+
+describe('globalStreak', () => {
+  it('un día cuenta si se marcó cualquier hábito', () => {
+    const streak = globalStreak(
+      [
+        ['2026-08-04', '2026-08-02'],
+        ['2026-08-03'],
+      ],
+      '2026-08-04',
+    );
+
+    expect(streak).toBe(3);
+  });
+
+  it('sin hábitos es cero', () => {
+    expect(globalStreak([], '2026-08-04')).toBe(0);
   });
 });
