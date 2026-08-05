@@ -245,6 +245,7 @@ export default async function ProgresoPage() {
         <ProgressBar
           percent={level.percent}
           label={`Avance al nivel ${level.level + 1}`}
+          track="on-feature"
         />
         <p className="text-caption text-on-feature-soft">
           {level.xpIntoLevel} / {level.xpForNextLevel} XP para el nivel{' '}

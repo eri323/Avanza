@@ -19,7 +19,7 @@ export function IconButton({
   type?: 'button' | 'submit';
   className?: string;
   children: React.ReactNode;
-} & Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'type'>) {
+} & Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'type' | 'aria-label' | 'title'>) {
   return (
     <button
       type={type}

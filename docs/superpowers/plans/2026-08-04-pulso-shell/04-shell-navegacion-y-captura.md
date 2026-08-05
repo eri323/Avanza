@@ -548,7 +548,7 @@ export function CaptureSheet({
             value={title}
             onChange={(event) => setTitle(event.target.value)}
             required
-            autoFocus
+            data-autofocus
             placeholder="¿Qué hay que hacer?"
             aria-label="Título de la tarea"
             className="w-full rounded-md border border-border bg-surface px-4 py-3 text-body text-text outline-none placeholder:text-text-muted focus:border-accent"
@@ -1064,7 +1064,7 @@ Justo después del bloque `{tab === 'task' && ( … )}`, antes de cerrar `</Shee
               value={habitName}
               onChange={(event) => setHabitName(event.target.value)}
               required
-              autoFocus
+              data-autofocus
               placeholder="¿Qué quieres sostener?"
               aria-label="Nombre del hábito"
               className="min-w-0 flex-1 rounded-md border border-border bg-surface px-4 py-3 text-body text-text outline-none placeholder:text-text-muted focus:border-accent"

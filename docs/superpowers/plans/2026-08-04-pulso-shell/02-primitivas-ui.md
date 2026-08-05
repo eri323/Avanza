@@ -611,6 +611,24 @@ Esperado: sin errores.
 
 Mensaje sugerido: `feat(pulso): primitivas ProgressBar y StatTile`
 
+**Nota de la revisión final del bloque 02 (arreglos aprobados por el autor):**
+`components/ui/progress-bar.tsx` en el repositorio se desvía en tres puntos de
+lo que muestra este documento:
+
+- `percent` se valida con `Number.isFinite` antes de recortarlo: un `NaN` (de
+  una razón 0/0) o un `±Infinity` se trata como 0, en vez de producir
+  `width: 'NaN%'` (que el navegador descarta) o un `aria-valuenow` inválido.
+- Se eliminó la variante `tone="positive"` del mapa `TONES` y del tipo:
+  ninguna pantalla de este plan la usa, y su contraste (`#67E8A0` sobre el
+  carril claro) es 1.40:1.
+- Se añadió `track?: 'default' | 'on-feature'` (por defecto `'default'`): el
+  carril fijo en `bg-surface-sunken/60` se lee al revés dentro de
+  `<Card tone="feature">` (lo usan así 05 y 08). `track="on-feature"` cambia el
+  carril a `bg-on-feature/8` para esos dos casos.
+
+Detalle y razonamiento de contraste en
+`.superpowers/sdd/02-primitivas-ui/final-fix-report.md`.
+
 ---
 
 ## Tarea 8: `HeatGrid`
@@ -999,6 +1017,23 @@ Esperado: todo verde.
 - `app/globals.css`
 
 Mensaje sugerido: `feat(pulso): primitivas Sheet y Fab`
+
+**Nota de la revisión final del bloque 02 (arreglos aprobados por el autor):**
+`components/ui/sheet.tsx` en el repositorio añade un mecanismo de foco inicial
+dirigible que este documento no muestra: si al abrir hay un descendiente con el
+atributo `data-autofocus`, se le da el foco justo después de `showModal()`; si
+no hay ninguno, queda el comportamiento por defecto del navegador (que cae en
+el botón "Cerrar"). Los bloques 04 y 07 lo usan en el primer campo con
+contenido real de sus formularios de captura y edición — no reimplementa la
+trampa de foco, que la sigue dando `showModal()`.
+
+De paso, `components/ui/icon-button.tsx` (Tarea 6) también se desvía de lo
+documentado: su `Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'type'>`
+se amplió a `'type' | 'aria-label' | 'title'`, para que el spread de props no
+pueda pisar el `aria-label` ni el `title` que la primitiva ya fija a partir de
+`label`.
+
+Detalle completo en `.superpowers/sdd/02-primitivas-ui/final-fix-report.md`.
 
 ---
 

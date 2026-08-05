@@ -495,6 +495,7 @@ export function HabitEditor({
             value={name}
             onChange={(event) => setName(event.target.value)}
             required
+            data-autofocus
             aria-label="Nombre del hábito"
             className="min-w-0 flex-1 rounded-md border border-border bg-surface px-4 py-3 text-body text-text outline-none focus:border-accent"
           />

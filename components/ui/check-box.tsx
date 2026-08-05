@@ -29,7 +29,12 @@ export function CheckBox({
       aria-label={label}
       disabled={disabled}
       onClick={onToggle}
-      className={`grid size-6 shrink-0 place-items-center border-2 transition-all disabled:opacity-40 ${
+      // El cuadro visual se queda en 24px (WCAG 2.5.8 pide 24px como mínimo
+      // literal), pero el objetivo táctil recomendado son 44px. `before:` añade
+      // un área de impacto invisible de 44px (24 + 10px por lado) sin tocar el
+      // tamaño ni la posición del cuadro: al ser absoluto no participa en el
+      // flujo, así que no desplaza vecinos en filas con `gap-3`.
+      className={`relative grid size-6 shrink-0 place-items-center border-2 transition-all before:absolute before:-inset-2.5 before:content-[''] disabled:opacity-40 ${
         shape === 'circle' ? 'rounded-xl' : 'rounded-xs'
       }`}
       style={{

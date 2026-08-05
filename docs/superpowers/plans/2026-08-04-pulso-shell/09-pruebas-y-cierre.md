@@ -475,9 +475,24 @@ const read = (name) =>
     .getPropertyValue(name)
     .trim();
 
+// Mezcla `hex` a `alpha` (0–1) sobre `bgHex`, para reproducir a mano lo que
+// pinta el navegador con una utilidad `bg-color/opacidad` — necesario para
+// medir el carril de `ProgressBar`, que no es un color plano.
+const mix = (hex, alpha, bgHex) => {
+  const [r, g, b] = hex.match(/\w\w/g).map((part) => parseInt(part, 16));
+  const [br, bg, bb] = bgHex.match(/\w\w/g).map((part) => parseInt(part, 16));
+  const blend = (c, bc) => Math.round(c * alpha + bc * (1 - alpha));
+  return `#${[blend(r, br), blend(g, bg), blend(b, bb)]
+    .map((v) => v.toString(16).padStart(2, '0'))
+    .join('')}`;
+};
+
 const surface = read('--pulso-surface');
 const elevated = read('--pulso-surface-elevated');
+const sunken = read('--pulso-surface-sunken');
 const feature = read('--pulso-surface-feature');
+const border = read('--pulso-border');
+const track = mix('#FFFFFF', 0.08, feature); // bg-on-feature/8 sobre surface-feature
 
 console.table([
   ['text / surface', ratio(read('--pulso-text'), surface)],
@@ -489,17 +504,32 @@ console.table([
   ['on-feature / feature', ratio('#FFFFFF', feature)],
   ['on-feature-soft / feature', ratio('#B9A9E0', feature)],
   ['positive / feature', ratio('#67E8A0', feature)],
+  ['blanco / accent (Chip seleccionado)', ratio('#FFFFFF', '#8B5CF6')],
+  ['accent (relleno) / carril on-feature (ProgressBar)', ratio('#8B5CF6', track)],
+  ['border / elevated', ratio(border, elevated)],
+  ['border / sunken', ratio(border, sunken)],
 ]);
 ```
 
-**Umbral: 4.5 en todas las filas.** Repite con el tema claro. Anota los nueve
-valores de cada tema.
+**Umbral: 4.5 en las nueve primeras filas (son texto).** Las cuatro últimas son
+objetos gráficos, no texto — el umbral ahí es 3.0 (WCAG 1.4.11, contraste no
+textual): el relleno contra el carril tiene que distinguirse para que la barra
+comunique progreso, y el borde contra la superficie tiene que distinguirse
+para que se note el límite de la tarjeta. Repite con el tema claro. Anota las
+trece filas de cada tema.
 
-- [ ] **Paso 2: Corregir sólo si alguna fila baja de 4.5**
+- [ ] **Paso 2: Corregir las filas que bajen del umbral**
 
-Si algún par falla, sube el token en `app/globals.css` hasta pasar y **vuelve a
-medir**. No cambies el componente: el arreglo va en el token, que es lo que
-hace que corregir el tema sea editar un archivo y no cada componente.
+Si un par de **texto** falla, sube el token en `app/globals.css` hasta pasar y
+**vuelve a medir**: el arreglo va en el token, que es lo que hace que corregir
+el tema sea editar un archivo y no cada componente.
+
+Si el par que falla usa un color de marca fijo — `accent` en el estado
+seleccionado de `Chip`, o `accent` como relleno de `ProgressBar` — no hay token
+que subir sin romper el resto de usos de esa marca en la app. Ahí el arreglo va
+en el componente: ajusta la clase que pinta ese caso concreto (por ejemplo, el
+`track` de `ProgressBar` que ya distingue `default` de `on-feature`), no el
+token compartido.
 
 Si nada falla, no toques nada. Un cambio "por si acaso" invalidaría las medidas
 que acabas de tomar.
@@ -584,7 +614,8 @@ Escribe al autor una nota con una línea por criterio y su evidencia:
 3. **Ningún número en pantalla es inventado** — comprobaciones contra la base de
    las Tareas 21, 26 y 27, más el Paso 6.
 4. **En tema oscuro no hay ningún par de texto por debajo de AA** — las nueve
-   medidas del Paso 1.
+   medidas de texto del Paso 1, más las cuatro de contraste no textual
+   (relleno/carril, borde/superficie) para descartar regresiones ahí también.
 5. **Los bloques 2 a 5 no obligan a rehacer las primitivas** — Paso 5.
 
 Si alguno no se puede afirmar con evidencia, **dilo**, no lo des por bueno.

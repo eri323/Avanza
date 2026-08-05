@@ -551,7 +551,11 @@ export function TodayBoard({
           </div>
           <span className="text-title text-positive">{xp.percent}%</span>
         </div>
-        <ProgressBar percent={xp.percent} label="Progreso del día" />
+        <ProgressBar
+          percent={xp.percent}
+          label="Progreso del día"
+          track="on-feature"
+        />
       </Card>
 
       {state.habits.length > 0 && (

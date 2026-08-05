@@ -5,3 +5,6 @@ export { CheckBox } from './check-box';
 export { IconButton } from './icon-button';
 export { ProgressBar } from './progress-bar';
 export { StatTile } from './stat-tile';
+export { HeatGrid, type HeatCell, type HeatColumn } from './heat-grid';
+export { Sheet } from './sheet';
+export { Fab } from './fab';

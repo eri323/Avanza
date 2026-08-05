@@ -113,3 +113,26 @@ body {
   color: var(--pulso-text);
   -webkit-tap-highlight-color: transparent;
 }
+
+/* La posición del diálogo modal la calcula el navegador con `inset: 0` +
+   `margin: auto`. Sobrescribir el margen es la forma limpia de anclarlo abajo
+   en móvil y centrarlo en escritorio, sin duplicar el componente. */
+.sheet {
+  margin: auto auto 0;
+  width: 100%;
+  max-width: 100%;
+  max-height: 90dvh;
+}
+
+.sheet::backdrop {
+  background-color: rgb(21 12 40 / 0.55);
+  backdrop-filter: blur(2px);
+}
+
+@media (min-width: 640px) {
+  .sheet {
+    margin: auto;
+    width: 28rem;
+    max-width: calc(100% - 2rem);
+  }
+}
