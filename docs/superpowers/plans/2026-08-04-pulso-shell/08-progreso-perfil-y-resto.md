@@ -416,7 +416,7 @@ import { ThemeToggle } from '@/components/shell/theme-toggle';
 import { getProfile } from '@/features/profile';
 import { TimezoneForm } from './timezone-form';
 
-export default async function PerfilPage() {
+export default async function ProfilePage() {
   const profile = await getProfile();
 
   const name = profile.displayName?.trim();

@@ -2,7 +2,7 @@ import { getTodayData } from '@/features/today';
 import { HabitCard } from '@/features/habits';
 import { QuickAdd, TaskItem } from '@/features/tasks';
 
-export default async function InicioPage() {
+export default async function HomePage() {
   const { today, overdue, dueToday, habits, projects } = await getTodayData();
 
   const pendingHabits = habits.filter((habit) => !habit.doneToday);

@@ -669,7 +669,7 @@ export { TodayBoard } from './components/today-board';
 import { Chip, ProgressBar, SparkIcon } from '@/components/ui';
 import { getHomeData, TodayBoard } from '@/features/today';
 
-export default async function InicioPage() {
+export default async function HomePage() {
   const { today, greeting, displayName, dayTasks, habits, level } =
     await getHomeData();
 

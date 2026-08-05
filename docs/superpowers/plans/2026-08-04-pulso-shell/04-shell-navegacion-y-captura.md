@@ -62,7 +62,7 @@ Esperado en la última salida: `(app)`, `auth`, `favicon.ico`, `globals.css`,
 Tarea 21.
 
 ```tsx
-export default async function InicioPage() {
+export default async function HomePage() {
 ```
 
 y el `<h1>`:
@@ -74,7 +74,7 @@ y el `<h1>`:
 `app/(app)/perfil/page.tsx` — igual:
 
 ```tsx
-export default async function PerfilPage() {
+export default async function ProfilePage() {
 ```
 
 ```tsx
