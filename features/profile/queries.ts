@@ -5,6 +5,8 @@ import { todayIn, type IsoDate } from '@/lib/dates';
 export type Profile = {
   id: string;
   displayName: string | null;
+  /** Del usuario de Auth, no de `profiles`: la tabla no lo duplica. */
+  email: string;
   timezone: string;
 };
 
@@ -27,6 +29,7 @@ export async function getProfile(): Promise<Profile> {
   return {
     id: data.id,
     displayName: data.display_name,
+    email: user.email ?? '',
     timezone: data.timezone,
   };
 }

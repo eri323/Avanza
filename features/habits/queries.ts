@@ -70,3 +70,55 @@ export async function listHabitsWithProgress(
     };
   });
 }
+
+/**
+ * Un hábito con su progreso, con la misma ventana de 84 días que la lista: la
+ * pantalla de detalle enseña cinco semanas de heatmap y la mejor racha, y las
+ * dos deben medirse contra el mismo histórico que la tarjeta.
+ */
+export async function getHabitById(
+  id: string,
+  today: IsoDate,
+  sinceDays = 84,
+): Promise<HabitWithProgress | null> {
+  const supabase = await createClient();
+
+  const { data: row, error } = await supabase
+    .from('habits')
+    .select('id, name, color, icon, cadence, target_per_week')
+    .eq('id', id)
+    .is('archived_at', null)
+    .maybeSingle();
+
+  if (error) throw error;
+  if (!row) return null;
+
+  const since = addDays(today, -sinceDays);
+
+  const { data: entryRows, error: entriesError } = await supabase
+    .from('habit_entries')
+    .select('entry_date')
+    .eq('habit_id', id)
+    .gte('entry_date', since)
+    .lte('entry_date', today);
+
+  if (entriesError) throw entriesError;
+
+  const habit: Habit = {
+    id: row.id,
+    name: row.name,
+    color: row.color,
+    icon: row.icon,
+    cadence: row.cadence,
+    targetPerWeek: row.target_per_week,
+  };
+
+  const entryDates = entryRows.map((entry) => entry.entry_date);
+
+  return {
+    ...habit,
+    entryDates,
+    streak: currentStreak(entryDates, toCadence(habit), today),
+    doneToday: entryDates.includes(today),
+  };
+}

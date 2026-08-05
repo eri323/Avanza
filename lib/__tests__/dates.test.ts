@@ -3,6 +3,7 @@ import {
   addDays,
   bucketFor,
   diffInDays,
+  hourIn,
   isoWeekStart,
   todayIn,
 } from '../dates';
@@ -97,5 +98,19 @@ describe('bucketFor', () => {
 
   it('clasifica una fecha futura como upcoming', () => {
     expect(bucketFor('2026-08-02', today)).toBe('upcoming');
+  });
+});
+
+describe('hourIn', () => {
+  it('devuelve la hora local del usuario, no la del servidor', () => {
+    const instant = new Date('2026-08-04T18:30:00Z');
+
+    expect(hourIn('UTC', instant)).toBe(18);
+    expect(hourIn('America/Mexico_City', instant)).toBe(12);
+    expect(hourIn('Europe/Madrid', instant)).toBe(20);
+  });
+
+  it('devuelve 0 y no 24 a medianoche', () => {
+    expect(hourIn('UTC', new Date('2026-08-04T00:15:00Z'))).toBe(0);
   });
 });

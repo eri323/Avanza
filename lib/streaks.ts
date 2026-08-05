@@ -118,6 +118,12 @@ export function bestStreak(
 /**
  * Porcentaje del mes en curso, medido contra lo que se esperaba hasta hoy y no
  * contra el mes entero: a día 3 nadie debería ver un 10%.
+ *
+ * En cadencia semanal la meta se prorratea por los días transcurridos, sin
+ * redondear hacia arriba: si saltara a la meta semanal completa en cuanto
+ * empieza una semana nueva, el día 8 del mes (un solo día de la segunda
+ * semana) ya exigiría el doble de marcas y el porcentaje caería en vez de
+ * mantenerse al día.
  */
 export function monthlyCompletion(
   entryDates: IsoDate[],
@@ -134,7 +140,7 @@ export function monthlyCompletion(
   const expected =
     cadence.type === 'daily'
       ? daysElapsed
-      : Math.ceil(daysElapsed / 7) * cadence.targetPerWeek;
+      : (daysElapsed / 7) * cadence.targetPerWeek;
 
   if (expected === 0) return 0;
 

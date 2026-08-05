@@ -1,2 +1,7 @@
-export { listProjects, type Project } from './queries';
+export {
+  listProjects,
+  listProjectsWithCounts,
+  type Project,
+  type ProjectWithCount,
+} from './queries';
 export { createProject, archiveProject } from './actions';

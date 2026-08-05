@@ -147,19 +147,22 @@ describe('monthlyCompletion', () => {
     expect(monthlyCompletion(dates, { type: 'daily' }, '2026-08-02')).toBe(50);
   });
 
-  it('en semanal se mide contra la meta por semanas transcurridas', () => {
-    // 8 días transcurridos → 2 semanas empezadas → meta 3 × 2 = 6.
+  it('en semanal prorratea la meta por días transcurridos, sin saltar al empezar semana', () => {
+    // 8 días transcurridos → meta prorrateada 8/7 × 3 = 3,428…
     const dates = ['2026-08-01', '2026-08-02', '2026-08-08'];
 
     expect(
       monthlyCompletion(dates, { type: 'weekly', targetPerWeek: 3 }, '2026-08-08'),
-    ).toBe(50);
+    ).toBe(88);
   });
 
-  it('nunca pasa del 100', () => {
-    const dates = ['2026-08-01', '2026-08-01', '2026-08-02', '2026-08-03'];
+  it('en semanal el tope evita pasar del 100 cuando el prorrateo desbordaría', () => {
+    // meta prorrateada 6/7 × 2 = 1,714…; 4 marcas darían ~233% sin el tope.
+    const dates = ['2026-08-03', '2026-08-04', '2026-08-05', '2026-08-06'];
 
-    expect(monthlyCompletion(dates, { type: 'daily' }, '2026-08-02')).toBe(100);
+    expect(
+      monthlyCompletion(dates, { type: 'weekly', targetPerWeek: 2 }, '2026-08-06'),
+    ).toBe(100);
   });
 
   it('sin marcas es cero', () => {

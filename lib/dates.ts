@@ -29,6 +29,21 @@ export function todayIn(timezone: string, now: Date = new Date()): IsoDate {
   }).format(now);
 }
 
+/**
+ * Hora local del usuario, 0–23. `hourCycle: 'h23'` es lo que evita que
+ * medianoche llegue como 24, que es lo que devuelve el ciclo por defecto en
+ * varios locales.
+ */
+export function hourIn(timezone: string, now: Date = new Date()): number {
+  const formatted = new Intl.DateTimeFormat('en-GB', {
+    timeZone: timezone,
+    hour: '2-digit',
+    hourCycle: 'h23',
+  }).format(now);
+
+  return Number(formatted);
+}
+
 export function addDays(date: IsoDate, days: number): IsoDate {
   const d = atUtcNoon(date);
   d.setUTCDate(d.getUTCDate() + days);
