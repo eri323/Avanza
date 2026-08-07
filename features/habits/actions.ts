@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
-import { createHabitSchema } from '@/lib/validation';
+import { createHabitSchema, updateHabitSchema } from '@/lib/validation';
 import { fail, messageForDbError, ok, type ActionResult } from '@/lib/result';
 import type { IsoDate } from '@/lib/dates';
 
@@ -42,6 +42,42 @@ export async function createHabit(
     cadence: parsed.data.cadence,
     target_per_week: parsed.data.targetPerWeek ?? null,
   });
+
+  if (error) return fail(messageForDbError(error.code));
+
+  revalidateHabitViews();
+  return ok();
+}
+
+export async function updateHabit(
+  formData: FormData,
+): Promise<ActionResult<void>> {
+  const cadence = formData.get('cadence');
+  const rawTarget = formData.get('targetPerWeek');
+
+  const parsed = updateHabitSchema.safeParse({
+    id: formData.get('id'),
+    name: formData.get('name'),
+    color: formData.get('color') ?? undefined,
+    icon: formData.get('icon') ?? undefined,
+    cadence,
+    targetPerWeek: cadence === 'weekly' && rawTarget ? rawTarget : null,
+  });
+  if (!parsed.success) return fail(parsed.error.issues[0].message);
+
+  const supabase = await createClient();
+
+  // RLS ya impide tocar el hábito de otro; no hace falta un .eq('user_id', …).
+  const { error } = await supabase
+    .from('habits')
+    .update({
+      name: parsed.data.name,
+      color: parsed.data.color,
+      icon: parsed.data.icon,
+      cadence: parsed.data.cadence,
+      target_per_week: parsed.data.targetPerWeek ?? null,
+    })
+    .eq('id', parsed.data.id);
 
   if (error) return fail(messageForDbError(error.code));
 

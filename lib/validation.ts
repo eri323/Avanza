@@ -68,30 +68,41 @@ export const createProjectSchema = z.object({
   color: color.default('#6366F1'),
 });
 
+const habitFields = {
+  name,
+  color: color.default('#22C55E'),
+  icon,
+  cadence: z.enum(['daily', 'weekly']),
+  targetPerWeek: z.coerce.number().int().min(1).max(7).nullable().optional(),
+};
+
 /**
  * `target_per_week` es obligatorio si y sólo si la cadencia es semanal. La
- * misma regla existe como CHECK en la base; aquí se replica para dar un
- * mensaje en el formulario en lugar de un error 500.
+ * misma regla existe como CHECK en la base; aquí se replica para dar un mensaje
+ * en el formulario en lugar de un error 500. Se define una vez y la usan los
+ * dos esquemas: si divergieran, crear y editar aceptarían cosas distintas.
  */
+const weeklyNeedsTarget = (value: {
+  cadence: 'daily' | 'weekly';
+  targetPerWeek?: number | null;
+}) =>
+  value.cadence === 'weekly'
+    ? value.targetPerWeek != null
+    : value.targetPerWeek == null;
+
+const TARGET_ISSUE = {
+  message:
+    'Un hábito semanal necesita una meta de 1 a 7; uno diario no lleva meta.',
+  path: ['targetPerWeek'],
+};
+
 export const createHabitSchema = z
-  .object({
-    name,
-    color: color.default('#22C55E'),
-    icon,
-    cadence: z.enum(['daily', 'weekly']),
-    targetPerWeek: z.coerce.number().int().min(1).max(7).nullable().optional(),
-  })
-  .refine(
-    (value) =>
-      value.cadence === 'weekly'
-        ? value.targetPerWeek != null
-        : value.targetPerWeek == null,
-    {
-      message:
-        'Un hábito semanal necesita una meta de 1 a 7; uno diario no lleva meta.',
-      path: ['targetPerWeek'],
-    },
-  );
+  .object(habitFields)
+  .refine(weeklyNeedsTarget, TARGET_ISSUE);
+
+export const updateHabitSchema = z
+  .object({ id: z.string().uuid(), ...habitFields })
+  .refine(weeklyNeedsTarget, TARGET_ISSUE);
 
 export const timezoneSchema = z.string().min(1).max(64);
 
@@ -99,3 +110,4 @@ export type CreateTaskInput = z.infer<typeof createTaskSchema>;
 export type UpdateTaskInput = z.infer<typeof updateTaskSchema>;
 export type CreateProjectInput = z.infer<typeof createProjectSchema>;
 export type CreateHabitInput = z.infer<typeof createHabitSchema>;
+export type UpdateHabitInput = z.infer<typeof updateHabitSchema>;

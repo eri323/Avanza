@@ -3,6 +3,7 @@ import {
   createHabitSchema,
   createProjectSchema,
   createTaskSchema,
+  updateHabitSchema,
 } from '../validation';
 import { messageForDbError } from '../result';
 
@@ -149,6 +150,52 @@ describe('icon', () => {
   it('rechaza más de 8 puntos de código', () => {
     const result = parseIcon('\u{1F642}'.repeat(9));
     expect(result.success).toBe(false);
+  });
+});
+
+describe('updateHabitSchema', () => {
+  const base = {
+    id: '11111111-1111-4111-8111-111111111111',
+    name: 'Leer',
+    color: '#8B5CF6',
+    icon: '📚',
+  };
+
+  it('acepta un hábito diario sin meta', () => {
+    const parsed = updateHabitSchema.safeParse({ ...base, cadence: 'daily' });
+    expect(parsed.success).toBe(true);
+  });
+
+  it('exige meta a un hábito semanal', () => {
+    const parsed = updateHabitSchema.safeParse({ ...base, cadence: 'weekly' });
+    expect(parsed.success).toBe(false);
+  });
+
+  it('rechaza meta en un hábito diario', () => {
+    const parsed = updateHabitSchema.safeParse({
+      ...base,
+      cadence: 'daily',
+      targetPerWeek: 3,
+    });
+    expect(parsed.success).toBe(false);
+  });
+
+  it('exige un id con forma de uuid', () => {
+    const parsed = updateHabitSchema.safeParse({
+      ...base,
+      id: 'no-soy-un-uuid',
+      cadence: 'daily',
+    });
+    expect(parsed.success).toBe(false);
+  });
+
+  it('convierte el emoji vacío en null', () => {
+    const parsed = updateHabitSchema.safeParse({
+      ...base,
+      icon: '',
+      cadence: 'daily',
+    });
+    expect(parsed.success && parsed.data.icon).toBeNull();
   });
 });
 

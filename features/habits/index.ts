@@ -1,5 +1,6 @@
 export type { Habit, HabitWithProgress } from './types';
 export { listHabitsWithProgress, getHabitById } from './queries';
-export { createHabit, toggleHabitEntry } from './actions';
+export { createHabit, updateHabit, toggleHabitEntry } from './actions';
 export { HabitCard } from './components/habit-card';
-export { NewHabitForm } from './components/new-habit-form';
+export { HabitEditor } from './components/habit-editor';
+export { HabitDetail } from './components/habit-detail';

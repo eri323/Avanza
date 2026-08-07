@@ -2,11 +2,12 @@
 
 import Link from 'next/link';
 import { useOptimistic, useState, useTransition } from 'react';
-import { Card, CheckBox, ChevronRightIcon } from '@/components/ui';
+import { Card, CheckBox, ChevronRightIcon, IconButton, PencilIcon } from '@/components/ui';
 import type { IsoDate } from '@/lib/dates';
 import { toggleHabitEntry } from '../actions';
 import { weekDots } from '../heatmap';
 import type { HabitWithProgress } from '../types';
+import { HabitEditor } from './habit-editor';
 
 export function HabitCard({
   habit,
@@ -18,6 +19,7 @@ export function HabitCard({
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [optimisticDone, setOptimisticDone] = useOptimistic(habit.doneToday);
+  const [editing, setEditing] = useState(false);
 
   function toggle() {
     setError(null);
@@ -71,6 +73,13 @@ export function HabitCard({
           </span>
           <ChevronRightIcon className="ml-auto size-5 shrink-0 text-text-muted" />
         </Link>
+        <IconButton
+          label={`Editar ${habit.name}`}
+          tone="ghost"
+          onClick={() => setEditing(true)}
+        >
+          <PencilIcon className="size-5" />
+        </IconButton>
       </div>
 
       <div className="flex justify-between gap-1" role="group" aria-label="Esta semana">
@@ -92,6 +101,12 @@ export function HabitCard({
       </div>
 
       {error && <p className="text-label text-text">{error}</p>}
+
+      <HabitEditor
+        habit={habit}
+        open={editing}
+        onClose={() => setEditing(false)}
+      />
     </Card>
   );
 }
