@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useOptimistic, useState, useTransition } from 'react';
 import { CheckBox } from '@/components/ui';
 import { formatDayMonth } from '@/lib/dates';
@@ -11,7 +12,7 @@ import type { Task } from '../types';
  * esperar la respuesta del servidor la haría sentir lenta. Si la escritura
  * falla, React revierte el estado optimista al terminar la transición.
  */
-export function TaskItem({ task }: { task: Task }) {
+export function TaskItem({ task, href }: { task: Task; href?: string }) {
   const [pending, startTransition] = useTransition();
   const [optimisticDone, setOptimisticDone] = useOptimistic(
     task.completedAt !== null,
@@ -36,13 +37,24 @@ export function TaskItem({ task }: { task: Task }) {
           disabled={pending}
           label={`Completar ${task.title}`}
         />
-        <span
-          className={`min-w-0 flex-1 truncate text-body ${
-            optimisticDone ? 'text-text-muted line-through' : 'text-text'
-          }`}
-        >
-          {task.title}
-        </span>
+        {href ? (
+          <Link
+            href={href}
+            className={`min-w-0 flex-1 truncate text-body hover:underline ${
+              optimisticDone ? 'text-text-muted line-through' : 'text-text'
+            }`}
+          >
+            {task.title}
+          </Link>
+        ) : (
+          <span
+            className={`min-w-0 flex-1 truncate text-body ${
+              optimisticDone ? 'text-text-muted line-through' : 'text-text'
+            }`}
+          >
+            {task.title}
+          </span>
+        )}
         {task.dueDate && (
           <span className="shrink-0 text-caption text-text-muted">
             {formatDayMonth(task.dueDate)}

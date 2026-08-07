@@ -1,10 +1,12 @@
 'use client';
 
+import Link from 'next/link';
 import { useOptimistic, useState, useTransition } from 'react';
+import { Card, CheckBox, ChevronRightIcon } from '@/components/ui';
 import type { IsoDate } from '@/lib/dates';
 import { toggleHabitEntry } from '../actions';
+import { weekDots } from '../heatmap';
 import type { HabitWithProgress } from '../types';
-import { HabitHeatmap } from './habit-heatmap';
 
 export function HabitCard({
   habit,
@@ -38,36 +40,58 @@ export function HabitCard({
         ? `${habit.streak} ${habit.streak === 1 ? 'día seguido' : 'días seguidos'}`
         : `${habit.streak} ${habit.streak === 1 ? 'semana seguida' : 'semanas seguidas'}`;
 
+  // El punto de hoy refleja la marca optimista; los demás vienen del servidor.
+  const dots = weekDots(habit.entryDates, today).map((dot) =>
+    dot.isToday ? { ...dot, done: optimisticDone } : dot,
+  );
+
   return (
-    <article className="flex flex-col gap-3 rounded-lg border border-neutral-200 p-4">
-      <div className="flex items-start gap-3">
-        <button
-          type="button"
-          onClick={toggle}
+    <Card as="article" className="flex flex-col gap-4">
+      <div className="flex items-center gap-3">
+        <CheckBox
+          checked={optimisticDone}
+          onToggle={toggle}
           disabled={pending}
-          aria-pressed={optimisticDone}
-          aria-label={`Marcar ${habit.name} hoy`}
-          className="mt-0.5 size-5 shrink-0 rounded-full border-2 transition-colors disabled:opacity-50"
-          style={{
-            borderColor: habit.color,
-            backgroundColor: optimisticDone ? habit.color : 'transparent',
-          }}
+          color={habit.color}
+          shape="circle"
+          label={`Marcar ${habit.name} hoy`}
         />
-        <div className="flex flex-col">
-          <h3 className="font-medium">{habit.name}</h3>
-          <p className="text-xs text-neutral-500">
-            {cadenceLabel} · {streakLabel}
-          </p>
-        </div>
+        <span aria-hidden className="text-heading leading-none">
+          {habit.icon ?? '•'}
+        </span>
+        <Link
+          href={`/habitos/${habit.id}`}
+          className="flex min-w-0 flex-1 items-center gap-2 transition-colors hover:underline"
+        >
+          <span className="flex min-w-0 flex-col">
+            <span className="truncate text-heading text-text">{habit.name}</span>
+            <span className="text-caption text-text-muted">
+              {cadenceLabel} · {streakLabel}
+            </span>
+          </span>
+          <ChevronRightIcon className="ml-auto size-5 shrink-0 text-text-muted" />
+        </Link>
       </div>
 
-      <HabitHeatmap
-        entryDates={habit.entryDates}
-        today={today}
-        color={habit.color}
-      />
+      <div className="flex justify-between gap-1" role="group" aria-label="Esta semana">
+        {dots.map((dot) => (
+          <span key={dot.date} className="flex flex-col items-center gap-1.5">
+            <span
+              title={`${dot.date}: ${dot.done ? 'cumplido' : 'sin marcar'}`}
+              className={`size-7 rounded-xl border-2 bg-surface-sunken ${
+                dot.isToday ? 'border-current text-accent' : 'border-transparent'
+              }`}
+              style={{
+                backgroundColor: dot.done ? habit.color : undefined,
+                opacity: dot.isFuture ? 0.3 : 1,
+              }}
+            />
+            <span className="text-caption text-text-muted">{dot.letter}</span>
+          </span>
+        ))}
+      </div>
 
-      {error && <p className="text-sm text-red-700">{error}</p>}
-    </article>
+      {error && <p className="text-label text-text">{error}</p>}
+    </Card>
   );
 }

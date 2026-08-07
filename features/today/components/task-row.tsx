@@ -55,7 +55,7 @@ export function TaskRow({
       {dueDate && (
         <span
           className={`shrink-0 text-caption ${
-            overdue && !done ? 'text-accent-warm' : 'text-text-muted'
+            overdue && !done ? 'text-text' : 'text-text-muted'
           }`}
         >
           {formatDayMonth(dueDate)}

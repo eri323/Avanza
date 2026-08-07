@@ -8,3 +8,5 @@ export {
 } from './queries';
 export { createTask, setTaskCompleted, deleteTask } from './actions';
 export { TaskItem } from './components/task-item';
+export { TaskList } from './components/task-list';
+export { TaskDetail } from './components/task-detail';

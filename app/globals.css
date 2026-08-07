@@ -136,3 +136,27 @@ body {
     max-width: calc(100% - 2rem);
   }
 }
+
+/* La visibilidad la decide `:has()`, no JavaScript: cuando el slot de detalle
+   pinta algo, la lista se esconde en móvil y convive con él desde `lg`. Sin
+   estado que hidratar no hay parpadeo al cargar un enlace directo. */
+.master-detail {
+  display: block;
+}
+
+.master-detail:has([data-detalle]) .master-detail__lista {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .master-detail {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 22rem;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  .master-detail:has([data-detalle]) .master-detail__lista {
+    display: block;
+  }
+}

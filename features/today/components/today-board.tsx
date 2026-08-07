@@ -152,6 +152,7 @@ export function TodayBoard({
         <ProgressBar
           percent={xp.percent}
           label="Progreso del día"
+          tone="accent"
           track="on-feature"
         />
       </Card>
@@ -181,7 +182,7 @@ export function TodayBoard({
 
       {overdue.length > 0 && (
         <section className="flex flex-col gap-3">
-          <h2 className="text-caption uppercase text-accent-warm">
+          <h2 className="text-caption uppercase text-text">
             Vencidas ({overdue.length})
           </h2>
           <ul className="flex flex-col gap-2">
@@ -242,7 +243,7 @@ export function TodayBoard({
         </p>
       )}
 
-      {error && <p className="text-label text-accent-warm">{error}</p>}
+      {error && <p className="text-label font-semibold text-text">{error}</p>}
     </div>
   );
 }

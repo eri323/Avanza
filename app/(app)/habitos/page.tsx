@@ -1,19 +1,40 @@
+import { HabitsIcon, StatTile } from '@/components/ui';
+import { globalStreak } from '@/lib/streaks';
 import { getTodayForUser } from '@/features/profile';
-import { HabitCard, listHabitsWithProgress, NewHabitForm } from '@/features/habits';
+import { HabitCard, listHabitsWithProgress } from '@/features/habits';
 
 export default async function HabitsPage() {
   const today = await getTodayForUser();
   const habits = await listHabitsWithProgress(today);
 
-  return (
-    <div className="mx-auto flex max-w-2xl flex-col gap-6 p-6">
-      <h1 className="text-xl font-semibold">Hábitos</h1>
+  // La racha global es la misma función de siempre aplicada al conjunto: un día
+  // cuenta si se marcó cualquier hábito.
+  const streak = globalStreak(
+    habits.map((habit) => habit.entryDates),
+    today,
+  );
+  const doneToday = habits.filter((habit) => habit.doneToday).length;
 
-      <NewHabitForm />
+  return (
+    <div className="flex flex-col gap-6">
+      <h1 className="text-display text-text">Hábitos</h1>
+
+      <div className="grid grid-cols-2 gap-3">
+        <StatTile
+          tone="feature"
+          value={String(streak)}
+          label={streak === 1 ? 'Día de racha' : 'Días de racha'}
+          icon={<HabitsIcon className="size-5" />}
+        />
+        <StatTile
+          value={`${doneToday}/${habits.length}`}
+          label="Marcados hoy"
+        />
+      </div>
 
       {habits.length === 0 ? (
-        <p className="text-sm text-neutral-500">
-          Aún no tienes hábitos. Crea el primero arriba.
+        <p className="text-body text-text-muted">
+          Aún no tienes hábitos. Usa el botón + para crear el primero.
         </p>
       ) : (
         <div className="flex flex-col gap-3">

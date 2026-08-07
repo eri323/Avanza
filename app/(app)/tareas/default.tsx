@@ -1,5 +1,5 @@
 import { TasksScreen } from './tasks-screen';
 
-export default function TasksPage() {
+export default function TasksDefault() {
   return <TasksScreen />;
 }
