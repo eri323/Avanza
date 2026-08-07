@@ -1,4 +1,4 @@
-import { test as setup } from '@playwright/test';
+import { expect, test as setup } from '@playwright/test';
 
 const AUTH_FILE = 'e2e/.auth/user.json';
 
@@ -24,6 +24,9 @@ setup('registrar usuario de prueba', async ({ page }) => {
   await page.getByRole('button', { name: 'Crear cuenta' }).click();
 
   await page.waitForURL('**/inicio', { timeout: 15_000 });
+  await expect(
+    page.getByRole('navigation', { name: 'Navegación principal' }).first(),
+  ).toBeVisible();
 
   await page.context().storageState({ path: AUTH_FILE });
 });
