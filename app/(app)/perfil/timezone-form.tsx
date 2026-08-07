@@ -52,7 +52,7 @@ export function TimezoneForm({ current }: { current: string }) {
       <button
         type="submit"
         disabled={pending}
-        className="self-start rounded-xs border border-border px-4 py-2 text-label text-text-soft transition-colors hover:border-accent/40 disabled:opacity-40"
+        className="self-start rounded-xs border border-border px-4 py-2 text-label text-text-soft transition-colors hover:border-accent/90 disabled:opacity-40"
       >
         {pending ? 'Guardando…' : 'Guardar'}
       </button>

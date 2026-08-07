@@ -46,7 +46,7 @@ export function ThemeToggle() {
       role="switch"
       aria-checked={isDark}
       onClick={toggle}
-      className="flex w-full items-center justify-between rounded-md border border-border bg-surface-elevated px-4 py-3 text-left transition-colors hover:border-accent/40"
+      className="flex w-full items-center justify-between rounded-md border border-border bg-surface-elevated px-4 py-3 text-left transition-colors hover:border-accent/90"
     >
       <span className="flex flex-col">
         <span className="text-label text-text">Tema oscuro</span>

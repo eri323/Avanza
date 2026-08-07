@@ -29,7 +29,7 @@ export function HabitChip({
       className={`flex shrink-0 items-center gap-2.5 rounded-xl border px-3.5 py-2.5 transition-all disabled:opacity-40 ${
         done
           ? 'border-transparent text-white'
-          : 'border-border bg-surface-elevated text-text-soft hover:border-accent/40'
+          : 'border-border bg-surface-elevated text-text-soft hover:border-accent/90'
       }`}
       style={done ? { backgroundColor: color } : undefined}
     >

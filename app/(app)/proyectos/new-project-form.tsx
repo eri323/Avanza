@@ -28,7 +28,10 @@ export function NewProjectForm() {
           name="name"
           required
           placeholder="Nuevo proyecto"
-          className="min-w-0 flex-1 rounded-md border border-border bg-surface-elevated px-4 py-3 text-body text-text outline-none placeholder:text-text-muted focus:border-accent"
+          // El foco no puede depender sólo del borde: el `--pulso-border`
+          // re-derivado (Tarea 33) da ~1.2:1 contra `accent`. El anillo
+          // sólido de foco cubre eso con 4.0:1+ contra `surface-elevated`.
+          className="min-w-0 flex-1 rounded-md border border-border bg-surface-elevated px-4 py-3 text-body text-text outline-none placeholder:text-text-muted focus:border-accent focus-visible:ring-2 focus-visible:ring-accent"
         />
         <input
           name="color"

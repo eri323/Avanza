@@ -11,7 +11,22 @@
   --pulso-surface-elevated: #FFFFFF;
   --pulso-surface-sunken: #F0E9FA;
   --pulso-surface-feature: #150C28;
-  --pulso-border: #F0E9FA;
+  /* El spec pide #F0E9FA (igual que `sunken`) en ambos temas. Auditoría de la
+     Tarea 33: eso da 1.18:1 contra `elevated` y 1.00:1 contra `sunken` — el
+     borde es invisible, por debajo del umbral de 3.0:1 de WCAG 1.4.11 para
+     que se note el límite de una tarjeta.
+     Primer arreglo (#867E98) subió demasiado: 3.85:1 / 3.25:1 contra
+     `elevated`/`sunken`, pero nada en la app pinta un borde sobre `sunken`
+     (`Card tone="sunken"` usa `border-transparent`) — la revisión de cierre
+     lo marcó como más oscuro de lo necesario y, peor, ese tono queda tan
+     cerca en luminancia de los overlays `accent/40` de foco y hover que los
+     invierte (ver `focus-visible:ring-accent` en los inputs y `hover:border-
+     accent/90` en vez de `/40` más abajo en el árbol de componentes).
+     Re-derivado sólo contra los pares que sí se renderizan (`elevated` y
+     `surface`, no `sunken`): #9289A6 da 3.31:1 / 3.13:1, el valor más claro
+     de la familia lavanda-gris (H258 S14%) que sigue superando 3.0:1 con
+     margen contra ambos. */
+  --pulso-border: #9289A6;
   --pulso-text: #1B1130;
   --pulso-text-soft: #5B3E8C;
   /* El spec pide #8B7FA8 en ambos temas. Sobre #FBF7FF eso da 3.5:1, por
@@ -33,7 +48,16 @@
   /* En claro la tarjeta destaca por ser oscura sobre lavanda; en oscuro se
      fundiría con el fondo, así que sube por elevación en vez de por inversión. */
   --pulso-surface-feature: #221542;
-  --pulso-border: #3A2560;
+  /* El spec pide #3A2560. Auditoría de la Tarea 33: eso da 1.29:1 contra
+     `elevated` y 1.16:1 contra `sunken`, por debajo del umbral de 3.0:1 de
+     WCAG 1.4.11.
+     Primer arreglo (#7A6E9E) también sobrecorrigió: 3.63:1 / 3.27:1 contra
+     `elevated`/`sunken`, misma sobrecorrección que en claro (`sunken` no se
+     renderiza con borde). Re-derivado sólo contra `elevated` y `surface`:
+     #736496 da 3.18:1 / 3.58:1, el valor más oscuro (más cerca del fondo,
+     más sutil) de la familia H258 S20% que sigue superando 3.0:1 con
+     margen contra `elevated`, que es el par más ajustado en este tema. */
+  --pulso-border: #736496;
   --pulso-text: #FFFFFF;
   --pulso-text-soft: #B9A9E0;
   --pulso-text-muted: #8B7FA8;

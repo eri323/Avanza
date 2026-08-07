@@ -1,7 +1,7 @@
 # Pulso Shell — Diseño
 
 **Fecha:** 2026-08-04
-**Estado:** aprobado
+**Estado:** implementado (plan `docs/superpowers/plans/2026-08-04-pulso-shell/`)
 **Reemplaza parcialmente:** `2026-08-01-avanza-design.md` (secciones de pantallas y
 organización del código; el modelo de datos y las invariantes siguen vigentes)
 

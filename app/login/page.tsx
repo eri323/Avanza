@@ -10,8 +10,14 @@ import {
 
 type Mode = 'link' | 'password';
 
+// El foco no puede depender sólo de `focus:border-accent`: contra el nuevo
+// `--pulso-border` (re-derivado en la Tarea 33 contra `elevated`/`surface`)
+// el acento da apenas ~1.2:1, casi invisible. `focus-visible:ring-2` dibuja
+// un anillo propio de 2px con el color de marca sólido — 4.0:1/4.4:1 contra
+// `surface` en claro/oscuro, muy por encima de 3.0:1 — que no compite con el
+// borde en reposo para ser visible.
 const FIELD =
-  'rounded-md border border-border bg-surface-elevated px-4 py-3 text-body text-text outline-none placeholder:text-text-muted focus:border-accent';
+  'rounded-md border border-border bg-surface-elevated px-4 py-3 text-body text-text outline-none placeholder:text-text-muted focus:border-accent focus-visible:ring-2 focus-visible:ring-accent';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -135,7 +141,7 @@ export default function LoginPage() {
             type="submit"
             formAction={handleSignUp}
             disabled={pending}
-            className="rounded-md border border-border py-3.5 text-label text-text-soft transition-colors hover:border-accent/40 disabled:opacity-40"
+            className="rounded-md border border-border py-3.5 text-label text-text-soft transition-colors hover:border-accent/90 disabled:opacity-40"
           >
             Crear cuenta
           </button>

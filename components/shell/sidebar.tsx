@@ -44,7 +44,11 @@ export function Sidebar({ projects }: { projects: ProjectWithCount[] }) {
               }`}
             >
               <Icon className="size-5" />
-              {label}
+              {/* El icono sí puede llevar `text-accent` (relleno, permitido).
+                  La etiqueta es texto pequeño (13px) y esencial: `accent`
+                  sobre el tinte `bg-accent/10` da 3.53:1–3.75:1, bajo AA. Se
+                  distingue por peso, no por tono. Tarea 33. */}
+              <span className={active ? 'font-bold text-text' : ''}>{label}</span>
             </Link>
           );
         })}

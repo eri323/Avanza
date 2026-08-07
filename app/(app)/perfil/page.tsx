@@ -37,7 +37,7 @@ export default async function ProfilePage() {
 
       <Link
         href="/proyectos"
-        className="flex items-center gap-3 rounded-md border border-border bg-surface-elevated px-4 py-3.5 transition-colors hover:border-accent/40"
+        className="flex items-center gap-3 rounded-md border border-border bg-surface-elevated px-4 py-3.5 transition-colors hover:border-accent/90"
       >
         <FolderIcon className="size-5 text-accent" />
         <span className="flex-1 text-label text-text">Proyectos</span>
@@ -45,9 +45,17 @@ export default async function ProfilePage() {
       </Link>
 
       <form action="/auth/signout" method="post">
+        {/* `accent-warm` (#FF5E7E) es un cálido claro: compuesto a cualquier
+            opacidad sobre `surface`/`elevated` en tema claro no supera nunca
+            el contraste propio del borde en reposo (tope real ~2.9:1 incluso
+            al 100%, por debajo de los 3.1–3.3:1 del `--pulso-border`
+            re-derivado). Subir la fracción no alcanza aquí — se usa el mismo
+            cálido oscurecido que ya resuelve el icono `danger` de
+            `IconButton` (#E63B60, Tarea 33 auditoría), sólido, que sí supera
+            el borde en reposo en los dos temas. */}
         <button
           type="submit"
-          className="w-full rounded-md border border-border px-4 py-3.5 text-label text-text transition-colors hover:border-accent-warm/40"
+          className="w-full rounded-md border border-border px-4 py-3.5 text-label text-text transition-colors hover:border-[#E63B60]"
         >
           Cerrar sesión
         </button>

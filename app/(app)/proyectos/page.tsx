@@ -30,7 +30,7 @@ export default async function ProjectsPage() {
             <li key={project.id}>
               <Link
                 href={`/proyectos/${project.id}`}
-                className="flex items-center gap-3 rounded-md border border-border bg-surface-elevated px-4 py-3.5 transition-colors hover:border-accent/40"
+                className="flex items-center gap-3 rounded-md border border-border bg-surface-elevated px-4 py-3.5 transition-colors hover:border-accent/90"
               >
                 <span
                   aria-hidden

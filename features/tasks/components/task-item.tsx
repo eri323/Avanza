@@ -61,7 +61,7 @@ export function TaskItem({ task, href }: { task: Task; href?: string }) {
           </span>
         )}
       </div>
-      {error && <p className="text-label text-accent-warm">{error}</p>}
+      {error && <p className="text-label text-text">{error}</p>}
     </li>
   );
 }

@@ -55,7 +55,10 @@ export function HabitEditor({
             maxLength={8}
             placeholder="🙂"
             aria-label="Emoji del hábito"
-            className="w-16 shrink-0 rounded-md border border-border bg-surface px-3 py-3 text-center text-body outline-none focus:border-accent"
+            // El foco no puede depender sólo del borde: el `--pulso-border`
+            // re-derivado (Tarea 33) da ~1.2:1 contra `accent`. El anillo
+            // sólido de foco cubre eso con 4.0:1+ contra `surface`.
+            className="w-16 shrink-0 rounded-md border border-border bg-surface px-3 py-3 text-center text-body outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent"
           />
           <input
             value={name}
@@ -63,7 +66,7 @@ export function HabitEditor({
             required
             data-autofocus
             aria-label="Nombre del hábito"
-            className="min-w-0 flex-1 rounded-md border border-border bg-surface px-4 py-3 text-body text-text outline-none focus:border-accent"
+            className="min-w-0 flex-1 rounded-md border border-border bg-surface px-4 py-3 text-body text-text outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent"
           />
         </div>
 

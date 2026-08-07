@@ -151,7 +151,10 @@ export function CaptureSheet({
             data-autofocus
             placeholder="¿Qué hay que hacer?"
             aria-label="Título de la tarea"
-            className="w-full rounded-md border border-border bg-surface px-4 py-3 text-body text-text outline-none placeholder:text-text-muted focus:border-accent"
+            // El foco no puede depender sólo del borde: el `--pulso-border`
+            // re-derivado (Tarea 33) da ~1.2:1 contra `accent`. El anillo
+            // sólido de foco cubre eso con 4.0:1+ contra `surface`.
+            className="w-full rounded-md border border-border bg-surface px-4 py-3 text-body text-text outline-none placeholder:text-text-muted focus:border-accent focus-visible:ring-2 focus-visible:ring-accent"
           />
 
           <fieldset className="flex flex-col gap-2">
@@ -222,7 +225,7 @@ export function CaptureSheet({
             </fieldset>
           )}
 
-          {error && <p className="text-label text-accent-warm">{error}</p>}
+          {error && <p className="text-label text-text">{error}</p>}
 
           <button
             type="submit"
@@ -243,7 +246,7 @@ export function CaptureSheet({
               maxLength={8}
               placeholder="🙂"
               aria-label="Emoji del hábito"
-              className="w-16 shrink-0 rounded-md border border-border bg-surface px-3 py-3 text-center text-body outline-none focus:border-accent"
+              className="w-16 shrink-0 rounded-md border border-border bg-surface px-3 py-3 text-center text-body outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent"
             />
             <input
               value={habitName}
@@ -252,7 +255,7 @@ export function CaptureSheet({
               data-autofocus
               placeholder="¿Qué quieres sostener?"
               aria-label="Nombre del hábito"
-              className="min-w-0 flex-1 rounded-md border border-border bg-surface px-4 py-3 text-body text-text outline-none placeholder:text-text-muted focus:border-accent"
+              className="min-w-0 flex-1 rounded-md border border-border bg-surface px-4 py-3 text-body text-text outline-none placeholder:text-text-muted focus:border-accent focus-visible:ring-2 focus-visible:ring-accent"
             />
           </div>
 
@@ -266,7 +269,7 @@ export function CaptureSheet({
                 className={`grid size-11 place-items-center rounded-md border transition-colors ${
                   habitIcon === emoji
                     ? 'border-accent bg-accent/10'
-                    : 'border-border bg-surface-elevated hover:border-accent/40'
+                    : 'border-border bg-surface-elevated hover:border-accent/90'
                 }`}
               >
                 {emoji}
@@ -303,7 +306,7 @@ export function CaptureSheet({
             El color y la meta detallada se editan desde Hábitos.
           </p>
 
-          {error && <p className="text-label text-accent-warm">{error}</p>}
+          {error && <p className="text-label text-text">{error}</p>}
 
           <button
             type="submit"

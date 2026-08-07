@@ -27,7 +27,17 @@ export function BottomNav() {
                 }`}
               >
                 <Icon className="size-6" />
-                <span className="text-[0.6875rem] leading-none">{label}</span>
+                {/* El icono sí puede llevar `text-accent` (relleno, permitido por
+                    las reglas de color). La etiqueta es texto pequeño (11px) y
+                    esencial: `accent` da 3.96:1–4.23:1 sobre `elevated`, bajo
+                    AA. Se distingue por peso, no por tono. Tarea 33. */}
+                <span
+                  className={`text-[0.6875rem] leading-none ${
+                    active ? 'font-bold text-text' : ''
+                  }`}
+                >
+                  {label}
+                </span>
               </Link>
             </li>
           );
