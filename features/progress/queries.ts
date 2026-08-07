@@ -2,6 +2,7 @@ import 'server-only';
 
 import { createClient } from '@/lib/supabase/server';
 import { addDays, todayIn, type IsoDate } from '@/lib/dates';
+import { bestStreak, globalStreak } from '@/lib/streaks';
 import {
   levelFromXp,
   lifetimeXp,
@@ -10,6 +11,10 @@ import {
   type LevelInfo,
   type XpPriority,
 } from '@/lib/xp';
+// De los módulos concretos y no de los barriles, por la misma razón que en
+// `features/today/queries.ts`: los barriles reexportan componentes de cliente.
+import { getProfile } from '@/features/profile/queries';
+import { listHabitsWithProgress } from '@/features/habits/queries';
 
 export type LifetimeTotals = {
   completedByPriority: Record<XpPriority, number>;
@@ -105,4 +110,46 @@ export async function getWeeklyXp(
     entries.data.map((row) => row.entry_date),
     today,
   );
+}
+
+export type ProgressData = {
+  today: IsoDate;
+  week: DayPoint[];
+  level: LevelInfo & { totalXp: number };
+  streak: number;
+  bestGlobalStreak: number;
+  activeDays: number;
+  weekXp: number;
+};
+
+/**
+ * Todo lo de esta pantalla se deriva de lo que ya hay en la base. No hay
+ * consultas nuevas para "logros" o "retos": ese estado no existe y pertenece al
+ * bloque 4.
+ */
+export async function getProgressData(): Promise<ProgressData> {
+  const profile = await getProfile();
+  const today = todayIn(profile.timezone);
+
+  const [week, level, habits] = await Promise.all([
+    getWeeklyXp(today, profile.timezone),
+    getLevel(),
+    listHabitsWithProgress(today),
+  ]);
+
+  const entryDatesByHabit = habits.map((habit) => habit.entryDates);
+
+  return {
+    today,
+    week,
+    level,
+    streak: globalStreak(entryDatesByHabit, today),
+    bestGlobalStreak: bestStreak(
+      entryDatesByHabit.flat(),
+      { type: 'daily' },
+      today,
+    ),
+    activeDays: week.filter((point) => point.xp > 0).length,
+    weekXp: week.reduce((total, point) => total + point.xp, 0),
+  };
 }

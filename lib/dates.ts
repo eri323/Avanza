@@ -59,6 +59,18 @@ export function formatDayMonth(date: IsoDate): string {
   }).format(new Date(`${date}T12:00:00Z`));
 }
 
+const WEEKDAY_LETTERS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+
+/**
+ * Inicial del día, con la semana empezando en lunes como en el resto de la app.
+ * A mano y no con `Intl`: la inicial de miércoles en español es X por
+ * convención, y ningún locale la devuelve así.
+ */
+export function weekdayLetter(date: IsoDate): string {
+  const dayOfWeek = (new Date(`${date}T12:00:00Z`).getUTCDay() + 6) % 7;
+  return WEEKDAY_LETTERS[dayOfWeek];
+}
+
 export function addDays(date: IsoDate, days: number): IsoDate {
   const d = atUtcNoon(date);
   d.setUTCDate(d.getUTCDate() + days);

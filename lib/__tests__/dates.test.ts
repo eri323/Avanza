@@ -7,6 +7,7 @@ import {
   hourIn,
   isoWeekStart,
   todayIn,
+  weekdayLetter,
 } from '../dates';
 
 describe('todayIn', () => {
@@ -124,5 +125,18 @@ describe('formatDayMonth', () => {
 
   it('no se corre de día por la zona horaria del servidor', () => {
     expect(formatDayMonth('2026-01-01')).toBe('1 de enero');
+  });
+});
+
+describe('weekdayLetter', () => {
+  it('devuelve la inicial del día en español', () => {
+    // 2026-08-03 es lunes.
+    expect(weekdayLetter('2026-08-03')).toBe('L');
+    expect(weekdayLetter('2026-08-04')).toBe('M');
+    expect(weekdayLetter('2026-08-05')).toBe('X');
+    expect(weekdayLetter('2026-08-06')).toBe('J');
+    expect(weekdayLetter('2026-08-07')).toBe('V');
+    expect(weekdayLetter('2026-08-08')).toBe('S');
+    expect(weekdayLetter('2026-08-09')).toBe('D');
   });
 });
