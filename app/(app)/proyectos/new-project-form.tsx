@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState, useTransition } from 'react';
+import { PlusIcon } from '@/components/ui';
 import { createProject } from '@/features/projects/actions';
 
 export function NewProjectForm() {
@@ -27,24 +28,25 @@ export function NewProjectForm() {
           name="name"
           required
           placeholder="Nuevo proyecto"
-          className="flex-1 rounded-md border border-neutral-300 px-3 py-2"
+          className="min-w-0 flex-1 rounded-md border border-border bg-surface-elevated px-4 py-3 text-body text-text outline-none placeholder:text-text-muted focus:border-accent"
         />
         <input
           name="color"
           type="color"
           defaultValue="#6366F1"
           aria-label="Color del proyecto"
-          className="h-10 w-12 rounded-md border border-neutral-300"
+          className="h-12 w-14 shrink-0 rounded-md border border-border bg-transparent"
         />
         <button
           type="submit"
           disabled={pending}
-          className="rounded-md bg-neutral-900 px-3 py-2 text-white disabled:opacity-50"
+          aria-label="Crear proyecto"
+          className="bg-brand-gradient grid size-12 shrink-0 place-items-center rounded-md text-white shadow-glow disabled:opacity-40"
         >
-          Crear
+          <PlusIcon className="size-6" />
         </button>
       </form>
-      {error && <p className="text-sm text-red-700">{error}</p>}
+      {error && <p className="text-label text-text">{error}</p>}
     </div>
   );
 }

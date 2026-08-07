@@ -27,18 +27,21 @@ export function TimezoneForm({ current }: { current: string }) {
   }
 
   return (
-    <form action={handleSubmit} className="flex flex-col gap-3">
-      <label htmlFor="timezone" className="text-sm font-medium">
+    <form
+      action={handleSubmit}
+      className="flex flex-col gap-3 rounded-md border border-border bg-surface-elevated p-4"
+    >
+      <label htmlFor="timezone" className="text-label text-text">
         Zona horaria
       </label>
-      <p className="text-xs text-neutral-500">
+      <p className="text-caption text-text-muted">
         Define qué día es &ldquo;hoy&rdquo; para tus tareas y hábitos.
       </p>
       <select
         id="timezone"
         name="timezone"
         defaultValue={current}
-        className="rounded-md border border-neutral-300 px-3 py-2"
+        className="rounded-xs border border-border bg-surface px-3 py-2.5 text-body text-text"
       >
         {TIMEZONES.map((tz) => (
           <option key={tz} value={tz}>
@@ -49,11 +52,11 @@ export function TimezoneForm({ current }: { current: string }) {
       <button
         type="submit"
         disabled={pending}
-        className="self-start rounded-md bg-neutral-900 px-3 py-2 text-white disabled:opacity-50"
+        className="self-start rounded-xs border border-border px-4 py-2 text-label text-text-soft transition-colors hover:border-accent/40 disabled:opacity-40"
       >
         {pending ? 'Guardando…' : 'Guardar'}
       </button>
-      {status && <p className="text-sm text-neutral-600">{status}</p>}
+      {status && <p className="text-label text-text-soft">{status}</p>}
     </form>
   );
 }

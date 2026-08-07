@@ -1,4 +1,6 @@
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { Card, ChevronLeftIcon, ProgressBar } from '@/components/ui';
 import { listProjects } from '@/features/projects';
 import { listTasksForProject, TaskItem } from '@/features/tasks';
 
@@ -22,41 +24,45 @@ export default async function ProjectPage({
   const percent = tasks.length === 0 ? 0 : Math.round((done / tasks.length) * 100);
 
   return (
-    <div className="mx-auto flex max-w-2xl flex-col gap-6 p-6">
-      <header className="flex flex-col gap-2">
+    <div className="flex flex-col gap-6">
+      <Link
+        href="/proyectos"
+        className="flex items-center gap-1 text-label text-text-soft transition-colors hover:underline"
+      >
+        <ChevronLeftIcon className="size-5" />
+        Proyectos
+      </Link>
+
+      <Card className="flex flex-col gap-4">
         <div className="flex items-center gap-3">
           <span
             aria-hidden
-            className="size-3 rounded-full"
+            className="size-3.5 shrink-0 rounded-xl"
             style={{ backgroundColor: project.color }}
           />
-          <h1 className="text-xl font-semibold">{project.name}</h1>
+          <h1 className="min-w-0 flex-1 truncate text-title text-text">
+            {project.name}
+          </h1>
+          <span className="text-title text-accent">{percent}%</span>
         </div>
-        <p className="text-sm text-neutral-500">
-          {done} de {tasks.length} completadas ({percent}%)
+        <ProgressBar
+          percent={percent}
+          label={`Avance de ${project.name}`}
+          tone="accent"
+        />
+        <p className="text-caption text-text-muted">
+          {done} de {tasks.length} completadas
         </p>
-        <div
-          role="progressbar"
-          aria-valuenow={percent}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          className="h-1.5 w-full overflow-hidden rounded-full bg-neutral-200"
-        >
-          <div
-            className="h-full bg-neutral-900 transition-all"
-            style={{ width: `${percent}%` }}
-          />
-        </div>
-      </header>
+      </Card>
 
       {tasks.length === 0 ? (
-        <p className="text-sm text-neutral-500">
+        <p className="text-body text-text-muted">
           Este proyecto todavía no tiene tareas.
         </p>
       ) : (
-        <ul className="flex flex-col">
+        <ul className="flex flex-col gap-2">
           {tasks.map((task) => (
-            <TaskItem key={task.id} task={task} />
+            <TaskItem key={task.id} task={task} href={`/tareas/${task.id}`} />
           ))}
         </ul>
       )}

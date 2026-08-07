@@ -1,34 +1,49 @@
 import Link from 'next/link';
-import { listProjects } from '@/features/projects';
+import { ChevronLeftIcon, ChevronRightIcon } from '@/components/ui';
+import { listProjectsWithCounts } from '@/features/projects';
 import { NewProjectForm } from './new-project-form';
 
 export default async function ProjectsPage() {
-  const projects = await listProjects();
+  const projects = await listProjectsWithCounts();
 
   return (
-    <div className="mx-auto flex max-w-2xl flex-col gap-6 p-6">
-      <h1 className="text-xl font-semibold">Proyectos</h1>
+    <div className="flex flex-col gap-6">
+      <Link
+        href="/perfil"
+        className="flex items-center gap-1 text-label text-text-soft transition-colors hover:underline lg:hidden"
+      >
+        <ChevronLeftIcon className="size-5" />
+        Perfil
+      </Link>
+
+      <h1 className="text-display text-text">Proyectos</h1>
 
       <NewProjectForm />
 
       {projects.length === 0 ? (
-        <p className="text-sm text-neutral-500">
+        <p className="text-body text-text-muted">
           Aún no tienes proyectos. Crea el primero arriba.
         </p>
       ) : (
-        <ul className="flex flex-col gap-1">
+        <ul className="flex flex-col gap-2">
           {projects.map((project) => (
             <li key={project.id}>
               <Link
                 href={`/proyectos/${project.id}`}
-                className="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-neutral-100"
+                className="flex items-center gap-3 rounded-md border border-border bg-surface-elevated px-4 py-3.5 transition-colors hover:border-accent/40"
               >
                 <span
                   aria-hidden
-                  className="size-3 rounded-full"
+                  className="size-3 shrink-0 rounded-xl"
                   style={{ backgroundColor: project.color }}
                 />
-                {project.name}
+                <span className="min-w-0 flex-1 truncate text-body text-text">
+                  {project.name}
+                </span>
+                <span className="shrink-0 text-caption text-text-muted">
+                  {project.pendingCount} pendientes
+                </span>
+                <ChevronRightIcon className="size-5 shrink-0 text-text-muted" />
               </Link>
             </li>
           ))}
