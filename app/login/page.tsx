@@ -10,6 +10,9 @@ import {
 
 type Mode = 'link' | 'password';
 
+const FIELD =
+  'rounded-md border border-border bg-surface-elevated px-4 py-3 text-body text-text outline-none placeholder:text-text-muted focus:border-accent';
+
 export default function LoginPage() {
   const router = useRouter();
   const [mode, setMode] = useState<Mode>('link');
@@ -58,17 +61,23 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center gap-6 px-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Avanza</h1>
-        <p className="text-sm text-neutral-500">
+    <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center gap-8 px-6">
+      <div className="flex flex-col gap-2">
+        <span
+          aria-hidden
+          className="bg-brand-gradient mb-2 grid size-14 place-items-center rounded-xl text-title text-white"
+        >
+          A
+        </span>
+        <h1 className="text-display text-text">Avanza</h1>
+        <p className="text-body text-text-soft">
           Tus tareas y hábitos en un solo lugar.
         </p>
       </div>
 
       {mode === 'link' ? (
         <form action={handleMagicLink} className="flex flex-col gap-3">
-          <label htmlFor="email" className="text-sm font-medium">
+          <label htmlFor="email" className="text-label text-text">
             Correo
           </label>
           <input
@@ -78,19 +87,19 @@ export default function LoginPage() {
             required
             autoComplete="email"
             placeholder="tu@correo.com"
-            className="rounded-md border border-neutral-300 px-3 py-2"
+            className={FIELD}
           />
           <button
             type="submit"
             disabled={pending}
-            className="rounded-md bg-neutral-900 px-3 py-2 text-white disabled:opacity-50"
+            className="bg-brand-gradient rounded-md py-3.5 text-label text-white shadow-glow disabled:opacity-40"
           >
             {pending ? 'Enviando…' : 'Enviar enlace'}
           </button>
         </form>
       ) : (
         <form className="flex flex-col gap-3">
-          <label htmlFor="email" className="text-sm font-medium">
+          <label htmlFor="email" className="text-label text-text">
             Correo
           </label>
           <input
@@ -100,9 +109,9 @@ export default function LoginPage() {
             required
             autoComplete="email"
             placeholder="tu@correo.com"
-            className="rounded-md border border-neutral-300 px-3 py-2"
+            className={FIELD}
           />
-          <label htmlFor="password" className="text-sm font-medium">
+          <label htmlFor="password" className="text-label text-text">
             Contraseña
           </label>
           <input
@@ -112,13 +121,13 @@ export default function LoginPage() {
             required
             minLength={8}
             autoComplete="current-password"
-            className="rounded-md border border-neutral-300 px-3 py-2"
+            className={FIELD}
           />
           <button
             type="submit"
             formAction={handleSignIn}
             disabled={pending}
-            className="rounded-md bg-neutral-900 px-3 py-2 text-white disabled:opacity-50"
+            className="bg-brand-gradient rounded-md py-3.5 text-label text-white shadow-glow disabled:opacity-40"
           >
             {pending ? 'Entrando…' : 'Entrar'}
           </button>
@@ -126,7 +135,7 @@ export default function LoginPage() {
             type="submit"
             formAction={handleSignUp}
             disabled={pending}
-            className="rounded-md border border-neutral-300 px-3 py-2 disabled:opacity-50"
+            className="rounded-md border border-border py-3.5 text-label text-text-soft transition-colors hover:border-accent/40 disabled:opacity-40"
           >
             Crear cuenta
           </button>
@@ -140,13 +149,13 @@ export default function LoginPage() {
           setMessage(null);
           setError(null);
         }}
-        className="self-start text-sm text-neutral-500 underline"
+        className="self-start text-label text-text-muted underline"
       >
         {mode === 'link' ? 'Usar contraseña' : 'Usar enlace por correo'}
       </button>
 
-      {message && <p className="text-sm text-green-700">{message}</p>}
-      {error && <p className="text-sm text-red-700">{error}</p>}
+      {message && <p className="text-label text-text">{message}</p>}
+      {error && <p className="text-label text-text">{error}</p>}
     </main>
   );
 }
