@@ -1,6 +1,5 @@
 import { getTodayForUser } from '@/features/profile';
-import { listProjects } from '@/features/projects';
-import { groupTasks, listPendingTasks, QuickAdd, TaskItem } from '@/features/tasks';
+import { groupTasks, listPendingTasks, TaskItem } from '@/features/tasks';
 import type { Task } from '@/features/tasks';
 
 const SECTIONS = [
@@ -11,24 +10,21 @@ const SECTIONS = [
 ] as const;
 
 export default async function TasksPage() {
-  const [today, tasks, projects] = await Promise.all([
+  const [today, tasks] = await Promise.all([
     getTodayForUser(),
     listPendingTasks(),
-    listProjects(),
   ]);
 
   const groups = groupTasks(tasks, today);
   const isEmpty = tasks.length === 0;
 
   return (
-    <main className="mx-auto flex max-w-2xl flex-col gap-6 p-6">
+    <div className="mx-auto flex max-w-2xl flex-col gap-6 p-6">
       <h1 className="text-xl font-semibold">Tareas</h1>
-
-      <QuickAdd projects={projects} />
 
       {isEmpty ? (
         <p className="text-sm text-neutral-500">
-          No tienes tareas pendientes. Añade la primera arriba.
+          No tienes tareas pendientes. Usa el botón + para crear la primera.
         </p>
       ) : (
         SECTIONS.map(({ key, label }) => {
@@ -49,6 +45,6 @@ export default async function TasksPage() {
           );
         })
       )}
-    </main>
+    </div>
   );
 }

@@ -1,1 +1,2 @@
-export { getTodayData, type TodayData } from './queries';
+export { getHomeData, type HomeData } from './queries';
+export { TodayBoard } from './components/today-board';

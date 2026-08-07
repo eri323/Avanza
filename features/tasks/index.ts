@@ -8,4 +8,3 @@ export {
 } from './queries';
 export { createTask, setTaskCompleted, deleteTask } from './actions';
 export { TaskItem } from './components/task-item';
-export { QuickAdd } from './components/quick-add';

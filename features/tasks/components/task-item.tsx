@@ -1,6 +1,8 @@
 'use client';
 
 import { useOptimistic, useState, useTransition } from 'react';
+import { CheckBox } from '@/components/ui';
+import { formatDayMonth } from '@/lib/dates';
 import { setTaskCompleted } from '../actions';
 import type { Task } from '../types';
 
@@ -26,24 +28,28 @@ export function TaskItem({ task }: { task: Task }) {
   }
 
   return (
-    <li className="flex flex-col gap-1 rounded-md px-2 py-1.5 hover:bg-neutral-50">
+    <li className="flex flex-col gap-1 rounded-md border border-border bg-surface-elevated px-4 py-3">
       <div className="flex items-center gap-3">
-        <input
-          type="checkbox"
+        <CheckBox
           checked={optimisticDone}
-          onChange={toggle}
+          onToggle={toggle}
           disabled={pending}
-          aria-label={`Completar ${task.title}`}
-          className="size-4"
+          label={`Completar ${task.title}`}
         />
-        <span className={optimisticDone ? 'text-neutral-400 line-through' : ''}>
+        <span
+          className={`min-w-0 flex-1 truncate text-body ${
+            optimisticDone ? 'text-text-muted line-through' : 'text-text'
+          }`}
+        >
           {task.title}
         </span>
         {task.dueDate && (
-          <span className="ml-auto text-xs text-neutral-500">{task.dueDate}</span>
+          <span className="shrink-0 text-caption text-text-muted">
+            {formatDayMonth(task.dueDate)}
+          </span>
         )}
       </div>
-      {error && <p className="text-sm text-red-700">{error}</p>}
+      {error && <p className="text-label text-accent-warm">{error}</p>}
     </li>
   );
 }

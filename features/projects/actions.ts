@@ -28,7 +28,7 @@ export async function createProject(
 
   if (error) return fail(messageForDbError(error.code));
 
-  revalidatePath('/proyectos');
+  revalidatePath('/proyectos', 'layout');
   return ok();
 }
 
@@ -43,6 +43,6 @@ export async function archiveProject(id: string): Promise<ActionResult<void>> {
 
   if (error) return fail(messageForDbError(error.code));
 
-  revalidatePath('/proyectos');
+  revalidatePath('/proyectos', 'layout');
   return ok();
 }

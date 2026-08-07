@@ -1,65 +1,63 @@
-import { getTodayData } from '@/features/today';
-import { HabitCard } from '@/features/habits';
-import { QuickAdd, TaskItem } from '@/features/tasks';
+import { Chip, ProgressBar, SparkIcon } from '@/components/ui';
+import { getHomeData, TodayBoard } from '@/features/today';
 
 export default async function HomePage() {
-  const { today, overdue, dueToday, habits, projects } = await getTodayData();
+  const { today, greeting, displayName, dayTasks, habits, level } =
+    await getHomeData();
 
-  const pendingHabits = habits.filter((habit) => !habit.doneToday);
-  const nothingToDo =
-    overdue.length === 0 && dueToday.length === 0 && habits.length === 0;
+  const name = displayName?.trim();
 
   return (
-    <main className="mx-auto flex max-w-2xl flex-col gap-8 p-6">
-      <header>
-        <h1 className="text-xl font-semibold">Inicio</h1>
-        <p className="text-sm text-neutral-500">{today}</p>
+    <div className="flex flex-col gap-6">
+      <header className="flex flex-col gap-4">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-col gap-1">
+            <h1 className="text-display text-text">
+              {name ? `${greeting}, ${name}` : greeting}
+            </h1>
+            <p className="text-label text-text-muted">
+              Esto es lo que tienes hoy.
+            </p>
+          </div>
+          <Chip tone="accent" selected className="shrink-0">
+            <SparkIcon className="size-4" />
+            Nivel {level.level}
+          </Chip>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <ProgressBar
+            percent={level.percent}
+            label={`Avance al nivel ${level.level + 1}`}
+            tone="accent"
+            size="sm"
+          />
+          <p className="text-caption text-text-muted">
+            {level.xpIntoLevel} / {level.xpForNextLevel} XP para el nivel{' '}
+            {level.level + 1}
+          </p>
+        </div>
       </header>
 
-      <QuickAdd projects={projects} />
-
-      {nothingToDo && (
-        <p className="text-sm text-neutral-500">
-          Nada pendiente para hoy. Añade una tarea arriba o crea un hábito.
-        </p>
-      )}
-
-      {habits.length > 0 && (
-        <section className="flex flex-col gap-3">
-          <h2 className="text-sm font-medium text-neutral-500">
-            Hábitos ({habits.length - pendingHabits.length}/{habits.length})
-          </h2>
-          {habits.map((habit) => (
-            <HabitCard key={habit.id} habit={habit} today={today} />
-          ))}
-        </section>
-      )}
-
-      {overdue.length > 0 && (
-        <section className="flex flex-col gap-2">
-          <h2 className="text-sm font-medium text-red-700">
-            Vencidas ({overdue.length})
-          </h2>
-          <ul className="flex flex-col">
-            {overdue.map((task) => (
-              <TaskItem key={task.id} task={task} />
-            ))}
-          </ul>
-        </section>
-      )}
-
-      {dueToday.length > 0 && (
-        <section className="flex flex-col gap-2">
-          <h2 className="text-sm font-medium text-neutral-500">
-            Para hoy ({dueToday.length})
-          </h2>
-          <ul className="flex flex-col">
-            {dueToday.map((task) => (
-              <TaskItem key={task.id} task={task} />
-            ))}
-          </ul>
-        </section>
-      )}
-    </main>
+      <TodayBoard
+        today={today}
+        tasks={dayTasks.map((task) => ({
+          id: task.id,
+          title: task.title,
+          priority: task.priority,
+          dueDate: task.dueDate,
+          done: task.completedAt !== null,
+        }))}
+        habits={habits.map((habit) => ({
+          id: habit.id,
+          name: habit.name,
+          icon: habit.icon,
+          color: habit.color,
+          cadence: habit.cadence,
+          streak: habit.streak,
+          done: habit.doneToday,
+        }))}
+      />
+    </div>
   );
 }

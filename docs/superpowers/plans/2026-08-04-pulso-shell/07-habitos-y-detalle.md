@@ -142,7 +142,7 @@ import { globalStreak } from '@/lib/streaks';
 import { getTodayForUser } from '@/features/profile';
 import { HabitCard, listHabitsWithProgress } from '@/features/habits';
 
-export default async function HabitosPage() {
+export default async function HabitsPage() {
   const today = await getTodayForUser();
   const habits = await listHabitsWithProgress(today);
 
@@ -816,7 +816,7 @@ import { heatColumns } from '@/features/habits/heatmap';
 
 const HEATMAP_WEEKS = 5;
 
-export default async function HabitoDetallePage({
+export default async function HabitDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;

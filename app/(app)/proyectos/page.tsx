@@ -6,7 +6,7 @@ export default async function ProjectsPage() {
   const projects = await listProjects();
 
   return (
-    <main className="mx-auto flex max-w-2xl flex-col gap-6 p-6">
+    <div className="mx-auto flex max-w-2xl flex-col gap-6 p-6">
       <h1 className="text-xl font-semibold">Proyectos</h1>
 
       <NewProjectForm />
@@ -34,6 +34,6 @@ export default async function ProjectsPage() {
           ))}
         </ul>
       )}
-    </main>
+    </div>
   );
 }

@@ -3,6 +3,7 @@ import {
   addDays,
   bucketFor,
   diffInDays,
+  formatDayMonth,
   hourIn,
   isoWeekStart,
   todayIn,
@@ -112,5 +113,16 @@ describe('hourIn', () => {
 
   it('devuelve 0 y no 24 a medianoche', () => {
     expect(hourIn('UTC', new Date('2026-08-04T00:15:00Z'))).toBe(0);
+  });
+});
+
+describe('formatDayMonth', () => {
+  it('escribe la fecha en español y sin año', () => {
+    expect(formatDayMonth('2026-07-02')).toBe('2 de julio');
+    expect(formatDayMonth('2026-12-25')).toBe('25 de diciembre');
+  });
+
+  it('no se corre de día por la zona horaria del servidor', () => {
+    expect(formatDayMonth('2026-01-01')).toBe('1 de enero');
   });
 });

@@ -34,14 +34,25 @@ export function CaptureProvider({
   children: React.ReactNode;
 }) {
   const [tab, setTab] = useState<CaptureTab | null>(null);
+  // El error vive aquí, no en la hoja: la hoja está montada siempre, así que
+  // cerrarla no desmonta nada y un error viejo sobreviviría hasta la próxima
+  // apertura. Limpiarlo en `open` mantiene todo dirigido por eventos.
+  const [error, setError] = useState<string | null>(null);
+
+  function open(next: CaptureTab = 'task') {
+    setError(null);
+    setTab(next);
+  }
 
   return (
-    <CaptureContext.Provider value={{ open: (next = 'task') => setTab(next) }}>
+    <CaptureContext.Provider value={{ open }}>
       {children}
       <CaptureSheet
         projects={projects}
         today={today}
         tab={tab}
+        error={error}
+        onError={setError}
         onTabChange={setTab}
         onClose={() => setTab(null)}
       />

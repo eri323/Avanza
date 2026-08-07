@@ -222,7 +222,7 @@ export async function TasksScreen() {
 ```tsx
 import { TasksScreen } from './tasks-screen';
 
-export default function TareasPage() {
+export default function TasksPage() {
   return <TasksScreen />;
 }
 ```
@@ -338,7 +338,7 @@ Al final del archivo, después del bloque `.sheet`:
 `app/(app)/tareas/layout.tsx`:
 
 ```tsx
-export default function TareasLayout({
+export default function TasksLayout({
   children,
   detalle,
 }: Readonly<{ children: React.ReactNode; detalle: React.ReactNode }>) {
@@ -359,7 +359,7 @@ lleva un id:
 ```tsx
 import { TasksScreen } from './tasks-screen';
 
-export default function TareasDefault() {
+export default function TasksDefault() {
   return <TasksScreen />;
 }
 ```
@@ -368,7 +368,7 @@ export default function TareasDefault() {
 y sin `[data-detalle]` en el árbol la regla de CSS no oculta la lista:
 
 ```tsx
-export default function DetalleDefault() {
+export default function DetailDefault() {
   return null;
 }
 ```
@@ -518,7 +518,7 @@ import { notFound } from 'next/navigation';
 import { listProjects } from '@/features/projects';
 import { getTaskById, TaskDetail } from '@/features/tasks';
 
-export default async function TareaDetallePage({
+export default async function TaskDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;

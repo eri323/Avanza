@@ -1,4 +1,5 @@
 import 'server-only';
+import { cache } from 'react';
 import { createClient } from '@/lib/supabase/server';
 import { todayIn, type IsoDate } from '@/lib/dates';
 
@@ -10,7 +11,9 @@ export type Profile = {
   timezone: string;
 };
 
-export async function getProfile(): Promise<Profile> {
+/** `cache` de React: una sola consulta por render aunque el shell y la pantalla
+ *  lo pidan por separado. */
+export const getProfile = cache(async function getProfile(): Promise<Profile> {
   const supabase = await createClient();
   const {
     data: { user },
@@ -32,7 +35,7 @@ export async function getProfile(): Promise<Profile> {
     email: user.email ?? '',
     timezone: data.timezone,
   };
-}
+});
 
 /**
  * El "hoy" del usuario. Todas las pantallas dependen de esto y nunca de

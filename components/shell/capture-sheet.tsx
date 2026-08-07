@@ -6,6 +6,7 @@ import { addDays, type IsoDate } from '@/lib/dates';
 import type { ProjectWithCount } from '@/features/projects';
 import { createTask } from '@/features/tasks/actions';
 import type { TaskPriority } from '@/features/tasks';
+import { createHabit } from '@/features/habits/actions';
 import type { CaptureTab } from './capture-provider';
 
 const PRIORITIES: { value: TaskPriority; label: string }[] = [
@@ -15,26 +16,37 @@ const PRIORITIES: { value: TaskPriority; label: string }[] = [
   { value: 'high', label: 'Alta' },
 ];
 
+/** Atajo, no restricción: el campo acepta cualquier emoji que el usuario pegue. */
+const SUGGESTED_ICONS = ['💧', '📚', '🏃', '🧘', '🌱', '💤', '🎧', '🍎'];
+
 export function CaptureSheet({
   projects,
   today,
   tab,
+  error,
+  onError,
   onTabChange,
   onClose,
 }: {
   projects: ProjectWithCount[];
   today: IsoDate;
   tab: CaptureTab | null;
+  error: string | null;
+  onError: (error: string | null) => void;
   onTabChange: (tab: CaptureTab) => void;
   onClose: () => void;
 }) {
   const [pending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
 
   const [title, setTitle] = useState('');
   const [priority, setPriority] = useState<TaskPriority>('none');
   const [dueDate, setDueDate] = useState<IsoDate | null>(today);
   const [projectId, setProjectId] = useState<string | null>(null);
+
+  const [habitName, setHabitName] = useState('');
+  const [habitIcon, setHabitIcon] = useState('');
+  const [cadence, setCadence] = useState<'daily' | 'weekly'>('daily');
+  const [targetPerWeek, setTargetPerWeek] = useState(3);
 
   const tomorrow = addDays(today, 1);
 
@@ -47,7 +59,7 @@ export function CaptureSheet({
 
   function submitTask(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setError(null);
+    onError(null);
 
     const formData = new FormData();
     formData.set('title', title);
@@ -61,7 +73,36 @@ export function CaptureSheet({
         resetTask();
         onClose();
       } else {
-        setError(result.error);
+        onError(result.error);
+      }
+    });
+  }
+
+  function resetHabit() {
+    setHabitName('');
+    setHabitIcon('');
+    setCadence('daily');
+    setTargetPerWeek(3);
+  }
+
+  function submitHabit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    onError(null);
+
+    const formData = new FormData();
+    formData.set('name', habitName);
+    formData.set('icon', habitIcon);
+    formData.set('cadence', cadence);
+    // Un hábito diario no lleva meta; mandarla rompería el CHECK de la base.
+    if (cadence === 'weekly') formData.set('targetPerWeek', String(targetPerWeek));
+
+    startTransition(async () => {
+      const result = await createHabit(formData);
+      if (result.ok) {
+        resetHabit();
+        onClose();
+      } else {
+        onError(result.error);
       }
     });
   }
@@ -77,7 +118,7 @@ export function CaptureSheet({
           type="button"
           role="tab"
           aria-selected={tab === 'task'}
-          onClick={() => onTabChange('task')}
+          onClick={() => { onError(null); onTabChange('task'); }}
           className={`flex-1 rounded-xs py-2 text-label transition-colors ${
             tab === 'task'
               ? 'bg-surface-elevated text-text shadow-soft'
@@ -90,7 +131,7 @@ export function CaptureSheet({
           type="button"
           role="tab"
           aria-selected={tab === 'habit'}
-          onClick={() => onTabChange('habit')}
+          onClick={() => { onError(null); onTabChange('habit'); }}
           className={`flex-1 rounded-xs py-2 text-label transition-colors ${
             tab === 'habit'
               ? 'bg-surface-elevated text-text shadow-soft'
@@ -189,6 +230,87 @@ export function CaptureSheet({
             className="bg-brand-gradient w-full rounded-md py-3.5 text-label text-white shadow-glow transition-opacity disabled:opacity-40"
           >
             {pending ? 'Añadiendo…' : 'Añadir tarea'}
+          </button>
+        </form>
+      )}
+
+      {tab === 'habit' && (
+        <form onSubmit={submitHabit} className="flex flex-col gap-5">
+          <div className="flex gap-3">
+            <input
+              value={habitIcon}
+              onChange={(event) => setHabitIcon(event.target.value)}
+              maxLength={8}
+              placeholder="🙂"
+              aria-label="Emoji del hábito"
+              className="w-16 shrink-0 rounded-md border border-border bg-surface px-3 py-3 text-center text-body outline-none focus:border-accent"
+            />
+            <input
+              value={habitName}
+              onChange={(event) => setHabitName(event.target.value)}
+              required
+              data-autofocus
+              placeholder="¿Qué quieres sostener?"
+              aria-label="Nombre del hábito"
+              className="min-w-0 flex-1 rounded-md border border-border bg-surface px-4 py-3 text-body text-text outline-none placeholder:text-text-muted focus:border-accent"
+            />
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {SUGGESTED_ICONS.map((emoji) => (
+              <button
+                key={emoji}
+                type="button"
+                onClick={() => setHabitIcon(emoji)}
+                aria-label={`Usar ${emoji}`}
+                className={`grid size-11 place-items-center rounded-md border transition-colors ${
+                  habitIcon === emoji
+                    ? 'border-accent bg-accent/10'
+                    : 'border-border bg-surface-elevated hover:border-accent/40'
+                }`}
+              >
+                {emoji}
+              </button>
+            ))}
+          </div>
+
+          <fieldset className="flex flex-col gap-2">
+            <legend className="mb-2 text-caption uppercase text-text-muted">
+              Cadencia
+            </legend>
+            <div className="flex flex-wrap items-center gap-2">
+              <Chip as="button" type="button" selected={cadence === 'daily'} onClick={() => setCadence('daily')}>
+                Todos los días
+              </Chip>
+              <Chip as="button" type="button" selected={cadence === 'weekly'} onClick={() => setCadence('weekly')}>
+                Veces por semana
+              </Chip>
+              {cadence === 'weekly' && (
+                <input
+                  type="number"
+                  min={1}
+                  max={7}
+                  value={targetPerWeek}
+                  onChange={(event) => setTargetPerWeek(Number(event.target.value))}
+                  aria-label="Veces por semana"
+                  className="w-20 rounded-xl border border-border bg-surface-elevated px-3 py-2 text-label text-text"
+                />
+              )}
+            </div>
+          </fieldset>
+
+          <p className="text-label text-text-muted">
+            El color y la meta detallada se editan desde Hábitos.
+          </p>
+
+          {error && <p className="text-label text-accent-warm">{error}</p>}
+
+          <button
+            type="submit"
+            disabled={pending || habitName.trim() === ''}
+            className="bg-brand-gradient w-full rounded-md py-3.5 text-label text-white shadow-glow transition-opacity disabled:opacity-40"
+          >
+            {pending ? 'Creando…' : 'Crear hábito'}
           </button>
         </form>
       )}

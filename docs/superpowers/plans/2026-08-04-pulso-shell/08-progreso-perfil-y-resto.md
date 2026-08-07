@@ -222,7 +222,7 @@ import { Card, HabitsIcon, ProgressBar, SparkIcon, StatTile } from '@/components
 import { getProgressData } from '@/features/progress';
 import { WeeklyChart } from '@/features/progress/components/weekly-chart';
 
-export default async function ProgresoPage() {
+export default async function ProgressPage() {
   const { week, level, streak, bestGlobalStreak, activeDays, weekXp } =
     await getProgressData();
 
@@ -593,7 +593,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@/components/ui';
 import { listProjectsWithCounts } from '@/features/projects';
 import { NewProjectForm } from './new-project-form';
 
-export default async function ProyectosPage() {
+export default async function ProjectsPage() {
   const projects = await listProjectsWithCounts();
 
   return (
@@ -655,7 +655,7 @@ import { Card, ChevronLeftIcon, ProgressBar } from '@/components/ui';
 import { listProjects } from '@/features/projects';
 import { listTasksForProject, TaskItem } from '@/features/tasks';
 
-export default async function ProyectoPage({
+export default async function ProjectPage({
   params,
 }: {
   params: Promise<{ id: string }>;

@@ -44,6 +44,21 @@ export function hourIn(timezone: string, now: Date = new Date()): number {
   return Number(formatted);
 }
 
+/**
+ * "2 de julio". Sin año porque sólo se usa para fechas cercanas, donde el año
+ * es ruido.
+ *
+ * `timeZone: 'UTC'` es obligatorio: la fecha ya viene resuelta al día del
+ * usuario y formatearla en la zona del servidor la correría un día en Vercel.
+ */
+export function formatDayMonth(date: IsoDate): string {
+  return new Intl.DateTimeFormat('es', {
+    day: 'numeric',
+    month: 'long',
+    timeZone: 'UTC',
+  }).format(new Date(`${date}T12:00:00Z`));
+}
+
 export function addDays(date: IsoDate, days: number): IsoDate {
   const d = atUtcNoon(date);
   d.setUTCDate(d.getUTCDate() + days);
